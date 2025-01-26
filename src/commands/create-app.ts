@@ -41,7 +41,7 @@ export async function createApp(
   createFolder(`${name}/apps/${appName}`);
 
   console.log(chalk.green(`Copying boilerplate files`));
-  copyFolder(`../boilerplate/micro-app`, `${name}/apps/${appName}`);
+  copyFolder(`../static/vue3`, `${name}/apps/${appName}`);
 
   updatePackageJsonName(`${name}/apps/${appName}/package.json`, `${appName}`);
   console.log(chalk.green(`Installing dependencies`));

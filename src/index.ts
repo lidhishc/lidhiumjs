@@ -3,7 +3,6 @@
 import { Command } from "commander";
 import { PackageDetails } from "./intefaces";
 import chalk from "chalk";
-import { createFolderAndFile } from "./file-manager";
 import { execa } from "execa";
 import init from "./commands/init";
 import inquirer from "inquirer";
