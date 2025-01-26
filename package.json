@@ -26,5 +26,10 @@
   },
   "bin": {
     "lidhvue": "./dist/index.js"
+  },
+  "devDependencies": {
+    "ajv": "^8.17.1",
+    "ajv-keywords": "^5.1.0",
+    "schema-utils": "^4.3.0"
   }
 }
