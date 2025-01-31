@@ -1,7 +1,7 @@
 {
-  "name": "lidhvue",
-  "version": "1.1.0",
-  "description": "micro-frontend cli packed with turbo and webpack powered by module-federation and vue",
+  "name": "lidhro",
+  "version": "1.0.0",
+  "description": "micro-frontend cli packed with turbo and webpack",
   "main": "index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -15,17 +15,19 @@
   },
   "dependencies": {
     "@types/commander": "^2.12.5",
+    "@types/figlet": "^1.7.0",
     "@types/inquirer": "^9.0.7",
     "@types/node": "^22.10.10",
     "chalk": "^5.4.1",
     "cpx": "^1.5.0",
     "execa": "^9.5.2",
+    "figlet": "^1.8.0",
     "inquirer": "^12.3.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.3"
   },
   "bin": {
-    "lidhvue": "./dist/index.js"
+    "lidhro": "./dist/index.js"
   },
   "devDependencies": {
     "ajv": "^8.17.1",

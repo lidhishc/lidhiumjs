@@ -2,9 +2,7 @@ import * as fs from "fs";
 
 import {
   copyFolder,
-  createFile,
   createFolder,
-  installDependencies,
   updatePackageJsonName,
 } from "../file-manager";
 
@@ -13,51 +11,50 @@ import chalk from "chalk";
 export async function createApp(
   appName: string,
   parentAppName?: string,
-  byPassConfigFileCheck: boolean = false
+  init: boolean = false
 ) {
-  if (!(byPassConfigFileCheck || parentAppName)) {
-    if (!fs.existsSync(`${parentAppName}/lidhvue.config.json`)) {
+  let fileContent = {} as any;
+  if (!init) {
+    let isFileExist = false;
+    isFileExist = fs.existsSync(`./lidhvue.config.json`);
+    if (!isFileExist) {
       console.error(
-        chalk.red(`lidhvue.config.js not found in ${appName}`),
-        "Please run `lidhvue init` to create a new app"
+        chalk.red(`lidhvue.config.js not found`),
+        chalk.green(`Run ${chalk.magenta(`'lidhro init'`)}`)
       );
       return;
     }
-  } else {
-    console.log(chalk.yellow(`Bypassing config file check`));
-  }
-  let fileContent = fs.readFileSync(
-    `${parentAppName}/lidhvue.config.json`,
-    "utf8"
-  );
 
-  console.log(fileContent);
+    fileContent = fs.readFileSync(`./lidhvue.config.json`, "utf8");
+  } else {
+    fileContent = fs.readFileSync(
+      `${parentAppName}/lidhvue.config.json`,
+      "utf8"
+    );
+  }
 
   const config = JSON.parse(fileContent);
 
   const { name } = config;
 
-  console.log(chalk.green(`Creating app ${appName}`));
-  createFolder(`${name}/apps/${appName}`);
-
-  console.log(chalk.green(`Copying boilerplate files`));
-  copyFolder(`../static/vue3`, `${name}/apps/${appName}`);
-
-  updatePackageJsonName(`${name}/apps/${appName}/package.json`, `${appName}`);
-  console.log(chalk.green(`Installing dependencies`));
-
-  createFile(
-    `${name}/apps/${appName}/install.sh`,
-    `#!/bin/bash
-    yarn install
-  `
-  );
-
-  fs.chmodSync(`${name}/apps/${appName}/install.sh`, "755");
-
-  await installDependencies(`${name}/apps/${appName}`);
-
-  console.log(chalk.green(`App ${appName} created successfully`));
+  if (init) {
+    console.log(chalk.green(`Creating app ${appName}`));
+    createFolder(`${name}/apps/${appName}`);
+    copyFolder(`../static/vue3`, `${name}/apps/${appName}`);
+    updatePackageJsonName(`${name}/apps/${appName}/package.json`, `${appName}`);
+    console.log(chalk.green(`App ${appName} created successfully`));
+    console.log(`\n`);
+    return;
+  } else {
+    console.log(chalk.green(`Creating app ${appName}`));
+    createFolder(`./apps/${appName}`);
+    copyFolder(`../static/vue3`, `./apps/${appName}`);
+    updatePackageJsonName(`./apps/${appName}/package.json`, `${appName}`);
+    console.log(chalk.green(`App ${appName} created successfully`));
+    console.log(`\n`);
+    console.log(chalk.yellow(`Install dependencies`));
+    console.log(`\n\n`);
+  }
 }
 
 // async function installDependencies(appName: string) {

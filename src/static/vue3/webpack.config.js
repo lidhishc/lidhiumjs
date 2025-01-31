@@ -6,6 +6,7 @@ const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 const { ModuleFederationPlugin } = require("webpack").container;
 
 process.env.VUE_APP_BASE_URL = "/";
+const randomPORT = Math.floor(Math.random() * (9000 - 8010 + 1)) + 8010;
 
 module.exports = {
   mode: process.env.NODE_ENV || "development",
@@ -114,7 +115,7 @@ module.exports = {
   //   // DevServer configuration
   devServer: {
     historyApiFallback: true,
-    port: 8081,
+    port: process.env.PORT || randomPORT,
     hot: true,
     watchFiles: ["src/**/*"],
     headers: {
