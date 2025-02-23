@@ -1,14 +1,7 @@
 <script lang="ts">
-import { defineAsyncComponent } from "vue";
-const Auth = defineAsyncComponent(
-  () => import("authentication/Auth" as string),
-);
-
 export default {
   name: "App-Host",
-  components: {
-    Auth,
-  },
+  components: {},
   computed: {},
   methods: {},
 };
@@ -17,8 +10,6 @@ export default {
 <template>
   <div>
     <div id="sadsad">From HOST</div>
-    <div>
-      <Auth />
-    </div>
+    <div></div>
   </div>
 </template>

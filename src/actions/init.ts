@@ -1,0 +1,134 @@
+import chalk from "chalk";
+import { printLibraryHeader } from "../utils/common";
+import inquirer from "inquirer";
+import { copyFolder, createFile, createFolder } from "../file-manager";
+// import inquirer from "inquirer";
+
+export default () => async (appName: string) => {
+  printLibraryHeader();
+  const { selectedApp, selectedBundle } = await inquirer.prompt([
+    {
+      type: "list", // Works like a radio button
+      name: "selectedApp",
+      message: "Select App:",
+      choices: ["Vue3", "React", "Angular"],
+    },
+    {
+      type: "list", // Works like a radio button
+      name: "selectedBundle",
+      message: "Select Bundler:",
+      choices: ["webpack", "vite"],
+    },
+  ]);
+
+  console.log(selectedApp, selectedBundle);
+  console.log(chalk.green(`Creating a ${appName}`));
+  createFolder(`./${appName}`);
+  createFile(
+    `./${appName}/lidhro.config.json`,
+    JSON.stringify({
+      project: appName,
+      webapp: selectedApp.toLowerCase(),
+      bundler: selectedBundle,
+      apps: {},
+    })
+  );
+  createFile(
+    `./${appName}/package.json`,
+    JSON.stringify({
+      name: appName,
+      private: true,
+      scripts: {
+        start: "lidhro start",
+        build: "lidhro build",
+      },
+      dependencies: {
+        "core-js": "^3.39.0",
+        "eslint-config-prettier": "^9.1.0",
+        "node-polyfill-webpack-plugin": "^4.1.0",
+        prettier: "^3.4.2",
+        "regenerator-runtime": "^0.14.1",
+        "register-service-worker": "^1.7.2",
+        vue: "3",
+        "vue-class-component": "^8.0.0-0",
+        "vue-router": "^4.5.0",
+        vuex: "^4.0.0",
+        webpack: "^5.97.1",
+        "webpack-merge": "^6.0.1",
+        "webpack-cli": "^6.0.1",
+      },
+      devDependencies: {
+        "@babel/core": "^7.26.0",
+        "@babel/preset-env": "^7.26.0",
+        "@types/jest": "^29.5.12",
+        "@types/node": "^22.10.10",
+        "@types/webpack-env": "^1.18.4",
+        "@typescript-eslint/eslint-plugin": "^5.4.0",
+        "@typescript-eslint/parser": "^5.4.0",
+        "@vue/cli-plugin-babel": "~5.0.0",
+        "@vue/cli-plugin-e2e-cypress": "~5.0.0",
+        "@vue/cli-plugin-eslint": "~5.0.0",
+        "@vue/cli-plugin-pwa": "~5.0.0",
+        "@vue/cli-plugin-router": "~5.0.0",
+        "@vue/cli-plugin-typescript": "~5.0.0",
+        "@vue/cli-plugin-unit-jest": "~5.0.0",
+        "@vue/cli-plugin-vuex": "~5.0.0",
+        "@vue/cli-service": "~5.0.0",
+        "@vue/eslint-config-standard": "^6.1.0",
+        "@vue/eslint-config-typescript": "^9.1.0",
+        "@vue/test-utils": "^2.0.0-0",
+        "@vue/vue3-jest": "^27.0.0-alpha.1",
+        ajv: "^8.17.1",
+        "ajv-keywords": "^5.1.0",
+        "babel-jest": "^27.0.6",
+        "babel-loader": "^9.2.1",
+        "css-loader": "^7.1.2",
+        cypress: "^9.7.0",
+        eslint: "^7.32.0",
+        "eslint-plugin-import": "^2.25.3",
+        "eslint-plugin-node": "^11.1.0",
+        "eslint-plugin-promise": "^5.1.0",
+        "eslint-plugin-vue": "^7.0.0",
+        "file-loader": "^6.2.0",
+        jest: "^27.0.5",
+        sass: "^1.83.1",
+        "sass-loader": "^16.0.4",
+        "schema-utils": "^4.3.0",
+        "style-loader": "^4.0.0",
+        "ts-jest": "^27.0.4",
+        "ts-loader": "^9.5.1",
+        typescript: "^5.7.2",
+        "vue-loader": "^17.4.2",
+        "vue-template-compiler": "^2.7.16",
+        "webpack-dev-server": "^5.2.0",
+      },
+    })
+  );
+
+  createFile(
+    `./${appName}/tsconfig.json`,
+    JSON.stringify({
+      compilerOptions: {
+        target: "ESNext",
+        module: "ESNext",
+        strict: true,
+        jsx: "preserve",
+        moduleResolution: "Node",
+        experimentalDecorators: true,
+        skipLibCheck: true,
+        esModuleInterop: true,
+        allowSyntheticDefaultImports: true,
+        forceConsistentCasingInFileNames: true,
+        useDefineForClassFields: true,
+        sourceMap: true,
+        lib: ["ESNext", "DOM", "DOM.Iterable", "ScriptHost"],
+        paths: {
+          "@config": ["./package.json"],
+        },
+        types: ["webpack-env", "jest"],
+      },
+      exclude: ["node_modules", "dist"],
+    })
+  );
+  copyFolder(`../static/config_files`, `./${appName}`);
+};

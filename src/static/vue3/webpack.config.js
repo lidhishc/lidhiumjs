@@ -9,6 +9,7 @@ process.env.VUE_APP_BASE_URL = "/";
 const randomPORT = Math.floor(Math.random() * (9000 - 8010 + 1)) + 8010;
 
 module.exports = {
+  context: path.resolve(__dirname, "."), // Ensure correct path
   mode: process.env.NODE_ENV || "development",
   // Entry point
   entry: "./src/main.ts",
