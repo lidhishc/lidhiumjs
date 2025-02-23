@@ -1,7 +1,5 @@
 import * as fs from "fs";
-
 import { copyFolder, createFolder } from "../file-manager";
-
 import chalk from "chalk";
 import { updateAppConfig } from "../utils/common";
 
