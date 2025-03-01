@@ -2,10 +2,24 @@ import chalk from "chalk";
 import { printLibraryHeader } from "../utils/common";
 import inquirer from "inquirer";
 import { copyFolder, createFile, createFolder } from "../file-manager";
-// import inquirer from "inquirer";
+import fs from "fs";
 
 export default () => async (appName: string) => {
   printLibraryHeader();
+  const isFileExist = fs.existsSync(`./lidhro.config.json`);
+
+  if (isFileExist) {
+    console.error(
+      chalk.red(`lidhro.config.json already exists`),
+      chalk.green(
+        `Run ${chalk.magenta(
+          `'lidhro generate <appName> <Port> for creating a new app'`
+        )}`
+      )
+    );
+    return;
+  }
+
   const { selectedApp, selectedBundle } = await inquirer.prompt([
     {
       type: "list", // Works like a radio button

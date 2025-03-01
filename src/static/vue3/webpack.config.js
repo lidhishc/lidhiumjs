@@ -4,6 +4,11 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const webpack = require("webpack");
 const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 const { ModuleFederationPlugin } = require("webpack").container;
+const {
+  generateRemoteRoutes,
+  getAppName,
+  getExposedComponents,
+} = require("./src/utils/utils");
 
 process.env.VUE_APP_BASE_URL = "/";
 
@@ -91,15 +96,10 @@ module.exports = {
       "process.env.BASE_URL": JSON.stringify("/"),
     }),
     new ModuleFederationPlugin({
-      name: "hostApp", // The name of the host application
+      name: getAppName(), // The name of the host application
       filename: "remoteEntry.js", // Remote entry file
-      remotes: {
-        authentication: "authentication@http://localhost:8082/remoteEntry.js",
-      },
-      exposes: {
-        "./store": "./src/store",
-        "./router": "./src/router",
-      },
+      remotes: generateRemoteRoutes(),
+      exposes: getExposedComponents(),
       shared: {
         vue: { singleton: true, eager: true, requiredVersion: "^3.0.0" },
         vuex: { singleton: true, eager: true, requiredVersion: "^4.0.0" },

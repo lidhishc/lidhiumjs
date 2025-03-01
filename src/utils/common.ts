@@ -19,16 +19,22 @@ export const updateAppConfig = ({
   appType,
   appName,
   currentConfig,
+  remotes = {},
+  exposedComponents = {},
 }: {
   port: number;
   appType: "host" | "remote";
   appName: string;
   currentConfig: any;
+  remotes: object;
+  exposedComponents: object;
 }) => {
   const packageJsonPath = `./lidhro.config.json`;
   const appConfig = {
     port,
     appType,
+    remotes,
+    exposedComponents,
   };
   currentConfig.apps[appName] = appConfig;
   fs.writeFileSync(packageJsonPath, JSON.stringify(currentConfig, null, 2));

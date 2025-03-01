@@ -53,6 +53,8 @@ export async function createApp({
       appType: "host",
       appName,
       currentConfig: config,
+      remotes: {},
+      exposedComponents: {},
     });
   } else {
     updateAppConfig({
@@ -60,18 +62,11 @@ export async function createApp({
       appType: "remote",
       appName,
       currentConfig: config,
+      remotes: {},
+      exposedComponents: {},
     });
   }
 
   console.log(chalk.green(`App ${appName} created successfully`));
   console.log(`\n`);
 }
-
-// async function installDependencies(appName: string) {
-//   try {
-//     await execa("sh", [`${appName}/install.sh`]);
-//     console.log("Dependencies installed successfully!");
-//   } catch (error) {
-//     console.error("Failed to install dependencies:", error);
-//   }
-// }
