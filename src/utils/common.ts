@@ -1,6 +1,7 @@
 import chalk from "chalk";
 import flinget from "figlet";
 import fs from "fs";
+import path from "path";
 
 export const printLibraryHeader = () => {
   console.log(
@@ -29,7 +30,7 @@ export const updateAppConfig = ({
   remotes: object;
   exposedComponents: object;
 }) => {
-  const packageJsonPath = `./lidhro.config.json`;
+  const configJsonPath = `./lidhro.config.json`;
   const appConfig = {
     port,
     appType,
@@ -37,20 +38,57 @@ export const updateAppConfig = ({
     exposedComponents,
   };
   currentConfig.apps[appName] = appConfig;
-  fs.writeFileSync(packageJsonPath, JSON.stringify(currentConfig, null, 2));
+  fs.writeFileSync(configJsonPath, JSON.stringify(currentConfig, null, 2));
 };
 
-export const getConfigFile = () => {
+export const getConfigFile = (
+  configPath?: string,
+  skipLog: boolean = false
+) => {
   let fileContent = {} as any;
   let isFileExist = false;
-  isFileExist = fs.existsSync(`./lidhro.config.json`);
+  isFileExist = fs.existsSync(configPath || `./lidhro.config.json`);
   if (!isFileExist) {
-    console.error(
-      chalk.red(`lidhro.config.json not found`),
-      chalk.green(`Run ${chalk.magenta(`'lidhro init'`)}`)
-    );
+    !skipLog &&
+      console.error(
+        chalk.red(`lidhro.config.json not found`),
+        chalk.green(`Run ${chalk.magenta(`'lidhro init'`)}`)
+      );
     return;
   }
-  fileContent = fs.readFileSync(`./lidhro.config.json`, "utf-8");
+  fileContent = fs.readFileSync(configPath || `./lidhro.config.json`, "utf-8");
   return JSON.parse(fileContent);
 };
+
+export const updateExposedComponents = ({
+  appName,
+  componentName,
+  componentPath,
+}: {
+  appName: string;
+  componentName: string;
+  componentPath: string;
+}) => {
+  const configJsonPath = `./../../lidhro.config.json`;
+  const currentConfig = getConfigFile(configJsonPath);
+  if (!currentConfig) {
+    return;
+  }
+  if (!currentConfig.apps[appName]) {
+    console.error(`App ${appName} not exists`);
+    return;
+  }
+  const exposedComponents = currentConfig.apps[appName].exposedComponents;
+  exposedComponents[componentName] = {
+    source: componentPath,
+    remoteComponentValue: `${appName}/${componentName}`,
+  };
+  fs.writeFileSync(configJsonPath, JSON.stringify(currentConfig, null, 2));
+};
+
+export function getAppName() {
+  const currentDir = process.cwd(); // Gets full path
+  console.log("Current directory:", currentDir);
+  const folderName = path.basename(currentDir); // Extracts folder name
+  return folderName;
+}
