@@ -74,8 +74,9 @@ export default () => async (appName: string) => {
       devDependencies: {
         "@babel/core": "^7.26.0",
         "@babel/preset-env": "^7.26.0",
-        "@types/jest": "^29.5.12",
-        "@types/node": "^22.10.10",
+        "@types/jest": "^29.5.14",
+        "@types/node": "^22.13.8",
+        "@types/mocha": "^10.0.10",
         "@types/webpack-env": "^1.18.4",
         "@typescript-eslint/eslint-plugin": "^8.24.1",
         "@typescript-eslint/parser": "^8.24.1",

@@ -1,6 +1,7 @@
 {
   "extends":"../../tsconfig.json",
   "compilerOptions": {
+    "resolveJsonModule": true,
    "outDir": "./dist",
     "rootDir": ".",
     "baseUrl": ".",
@@ -9,6 +10,7 @@
         "src/*"
       ]
     },
+    "types": ["node", "jest","mocha"]
   },
   "include": [
     "src/**/*.ts",
@@ -16,7 +18,7 @@
     "src/**/*.vue",
     "tests/**/*.ts",
     "tests/**/*.tsx",
-    "src/utils/*.js"  ],
+    "src/utils/*.js"],
   "exclude": [
     "node_modules"
   ]

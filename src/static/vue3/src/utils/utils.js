@@ -15,7 +15,6 @@ function readConfigFile() {
 
 function getAppName() {
   const currentPath = __dirname.split(path.sep);
-  console.log("Current path:", currentPath);
   const currentFolder = currentPath[currentPath.length - 3];
   return currentFolder;
 }
@@ -77,10 +76,15 @@ function getExposedComponents() {
   const currentAppName = getAppName();
   const currentApp = configFile.apps[currentAppName];
   const exposedComponents = currentApp.exposedComponents;
-  return Object.entries(exposedComponents).reduce((acc, [key, value]) => {
-    acc[`./${key}`] = value;
-    return acc;
-  }, {});
+  const components = Object.entries(exposedComponents).reduce(
+    (acc, [key, value]) => {
+      acc[`./${key}`] = value.source;
+      return acc;
+    },
+    {}
+  );
+  console.log("Exposed components:", components);
+  return components;
 }
 
 module.exports = {
