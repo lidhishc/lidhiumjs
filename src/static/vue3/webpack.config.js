@@ -4,35 +4,34 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const webpack = require("webpack");
 const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 const { ModuleFederationPlugin } = require("webpack").container;
-const {
-  generateRemoteRoutes,
-  getAppName,
-  getExposedComponents,
-} = require("./src/utils/utils");
+const { generateRemoteRoutes, getAppName } = require("./src/utils/utils");
+const TerserPlugin = require("terser-webpack-plugin");
 
-process.env.VUE_APP_BASE_URL = "/";
+const isProduction = process.env.NODE_ENV === "production";
 
 module.exports = {
+  mode: isProduction ? "production" : "development",
   context: path.resolve(__dirname, "."), // Ensure correct path
-  mode: process.env.NODE_ENV || "development",
-  // Entry point
-  entry: "./src/main.ts",
   target: "web",
-  // Output configuration
+
+  entry: "./src/main.ts",
+
   output: {
+    asyncChunks: true,
+    chunkFilename: "[name].[contenthash].js",
     path: path.resolve(__dirname, "dist"),
     filename: "bundle.[contenthash].js",
-    clean: true, // Cleans the output directory before building
-    publicPath: "auto", // Needed for Module Federation
+    clean: true,
+    publicPath: "auto",
   },
-  // Resolve extensions and aliases
+
   resolve: {
     extensions: [".ts", ".js", ".vue"],
     alias: {
       "@": path.resolve(__dirname, "src"),
     },
   },
-  // Module rules for different file types
+
   module: {
     rules: [
       {
@@ -48,18 +47,14 @@ module.exports = {
         exclude: /node_modules/,
       },
       {
-        test: /\.scss$/,
+        test: /\.(sc|sa|c)ss$/,
         use: ["style-loader", "css-loader", "sass-loader"],
-      },
-      {
-        test: /\.css$/,
-        use: ["style-loader", "css-loader"],
       },
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
         type: "asset/resource",
         generator: {
-          filename: "assets/[name].[hash:8][ext]",
+          filename: "assets/[name].[contenthash:8][ext]",
         },
       },
       {
@@ -72,7 +67,7 @@ module.exports = {
               [
                 "@babel/preset-env",
                 {
-                  targets: "> 0.25%, not dead", // Adjust based on your target browsers
+                  targets: "> 0.25%, not dead",
                   useBuiltIns: "usage",
                   corejs: "3",
                 },
@@ -84,22 +79,54 @@ module.exports = {
     ],
   },
 
-  // Plugins
+  optimization: {
+    minimize: isProduction,
+    minimizer: [
+      new TerserPlugin({
+        terserOptions: {
+          compress: {
+            drop_console: true, // Remove console logs in production
+          },
+          output: {
+            comments: false, // Remove comments
+          },
+        },
+        extractComments: false,
+      }),
+    ],
+    splitChunks: {
+      chunks: "all",
+      cacheGroups: {
+        vendors: {
+          test: /[\\/]node_modules[\\/]/,
+          name: "vendors",
+          chunks: "all",
+        },
+      },
+    },
+  },
+
   plugins: [
     new VueLoaderPlugin(),
     new NodePolyfillPlugin(),
+
     new HtmlWebpackPlugin({
       template: "./public/index.html",
+      minify: isProduction ? { collapseWhitespace: true } : false,
     }),
-    // Define BASE_URL as a global variable
+
     new webpack.DefinePlugin({
       "process.env.BASE_URL": JSON.stringify("/"),
+      "process.env.NODE_ENV": JSON.stringify(
+        process.env.NODE_ENV || "development"
+      ),
+      __VUE_HMR_RUNTIME__: JSON.stringify(isProduction ? "undefined" : "true"),
     }),
+
     new ModuleFederationPlugin({
-      name: getAppName(), // The name of the host application
-      filename: "remoteEntry.js", // Remote entry file
+      name: getAppName(),
+      filename: "remoteEntry.js",
       remotes: generateRemoteRoutes(),
-      exposes: getExposedComponents(),
       shared: {
         vue: { singleton: true, eager: true, requiredVersion: "^3.0.0" },
         vuex: { singleton: true, eager: true, requiredVersion: "^4.0.0" },
@@ -112,16 +139,18 @@ module.exports = {
     }),
   ],
 
-  //   // DevServer configuration
-  devServer: {
-    historyApiFallback: true,
-    hot: true,
-    watchFiles: ["src/**/*"],
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH, OPTIONS",
-      "Access-Control-Allow-Headers":
-        "X-Requested-With, content-type, Authorization",
-    },
-  },
+  devServer: isProduction
+    ? undefined
+    : {
+        historyApiFallback: true,
+        hot: true,
+        watchFiles: ["src/**/*"],
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods":
+            "GET, POST, PUT, DELETE, PATCH, OPTIONS",
+          "Access-Control-Allow-Headers":
+            "X-Requested-With, content-type, Authorization",
+        },
+      },
 };
