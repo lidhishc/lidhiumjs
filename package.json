@@ -1,6 +1,6 @@
 {
   "name": "lidhro",
-  "version": "1.0.22",
+  "version": "1.0.23",
   "description": "micro-frontend cli packed with webpack",
   "main": "index.ts",
   "scripts": {
