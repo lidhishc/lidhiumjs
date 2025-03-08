@@ -1,6 +1,6 @@
 {
   "name": "lidhro",
-  "version": "1.0.19",
+  "version": "1.0.20",
   "description": "micro-frontend cli packed with turbo and webpack",
   "main": "index.ts",
   "scripts": {
