@@ -5,7 +5,7 @@
 [![Downloads](https://img.shields.io/npm/dm/lidhro.svg)](https://www.npmjs.com/package/lidhro)
 [![GitHub issues](https://img.shields.io/github/issues/lidhishc/lidhro)](https://github.com/lidhishc/lidhro/issues)
 
-A powerful CLI tool for creating and managing micro-frontend applications with Turbo and Webpack.
+A powerful CLI tool for creating and managing micro-frontend applications with Webpack.
 
 ## Features
 
