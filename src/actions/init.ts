@@ -1,8 +1,9 @@
-import chalk from "chalk";
-import { printLibraryHeader } from "../utils/common";
-import inquirer from "inquirer";
 import { copyFolder, createFile, createFolder } from "../file-manager";
+
+import chalk from "chalk";
 import fs from "fs";
+import inquirer from "inquirer";
+import { printLibraryHeader } from "../utils/common";
 
 export default () => async (appName: string) => {
   printLibraryHeader();
@@ -20,20 +21,24 @@ export default () => async (appName: string) => {
     return;
   }
 
-  const { selectedApp, selectedBundle } = await inquirer.prompt([
-    {
-      type: "list", // Works like a radio button
-      name: "selectedApp",
-      message: "Select App:",
-      choices: ["Vue3", "React", "Angular"],
-    },
-    {
-      type: "list", // Works like a radio button
-      name: "selectedBundle",
-      message: "Select Bundler:",
-      choices: ["webpack", "vite"],
-    },
-  ]);
+  const { selectedApp, selectedBundle } = {
+    selectedApp: "Vue3",
+    selectedBundle: "webpack",
+  };
+  // await inquirer.prompt([
+  //   {
+  //     type: "list", // Works like a radio button
+  //     name: "selectedApp",
+  //     message: "Select App:",
+  //     choices: ["Vue3", "React", "Angular"],
+  //   },
+  //   {
+  //     type: "list", // Works like a radio button
+  //     name: "selectedBundle",
+  //     message: "Select Bundler:",
+  //     choices: ["webpack", "vite"],
+  //   },
+  // ]);
 
   console.log(selectedApp, selectedBundle);
   console.log(chalk.green(`Creating a ${appName}`));
