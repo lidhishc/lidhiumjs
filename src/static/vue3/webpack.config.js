@@ -143,7 +143,7 @@ module.exports = {
     ? undefined
     : {
         historyApiFallback: true,
-        hot: true,
+        hot: false,
         watchFiles: ["src/**/*"],
         headers: {
           "Access-Control-Allow-Origin": "*",
