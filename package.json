@@ -1,6 +1,6 @@
 {
   "name": "lidhro",
-  "version": "1.0.0",
+  "version": "1.0.15",
   "description": "micro-frontend cli packed with turbo and webpack",
   "main": "index.ts",
   "scripts": {
@@ -18,9 +18,9 @@
     "@types/figlet": "^1.7.0",
     "@types/inquirer": "^9.0.7",
     "@types/node": "^22.10.10",
-    "chalk": "^5.4.1",
+    "chalk": "^4.1.2",
     "cpx": "^1.5.0",
-    "execa": "^9.5.2",
+    "execa": "^5.1.1",
     "figlet": "^1.8.0",
     "inquirer": "^12.3.2",
     "ts-node": "^10.9.2",

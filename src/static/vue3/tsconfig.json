@@ -1,42 +1,24 @@
 {
+  "extends":"../../tsconfig.json",
   "compilerOptions": {
-    "target": "esnext",
-    "module": "esnext",
-    "strict": true,
-    "jsx": "preserve",
-    "moduleResolution": "node",
-    "experimentalDecorators": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": true,
-    "useDefineForClassFields": true,
-    "sourceMap": true,
+    "resolveJsonModule": true,
+   "outDir": "./dist",
+    "rootDir": ".",
     "baseUrl": ".",
-    "types": [
-      "webpack-env",
-      "jest",
-      "node"
-    ],
     "paths": {
       "@/*": [
         "src/*"
       ]
     },
-    "lib": [
-      "esnext",
-      "dom",
-      "dom.iterable",
-      "scripthost"
-    ]
+    "types": ["node", "jest","mocha"]
   },
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx",
     "src/**/*.vue",
     "tests/**/*.ts",
-    "tests/**/*.tsx"
-  ],
+    "tests/**/*.tsx",
+    "src/utils/*.js"],
   "exclude": [
     "node_modules"
   ]
