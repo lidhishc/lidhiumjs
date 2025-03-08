@@ -37,5 +37,22 @@
   "volta": {
     "node": "22.13.1",
     "yarn": "1.22.22"
-  }
+  },
+  "keywords": [
+    "microfrontends",
+    "micro frontends",
+    "module federation",
+    "webpack",
+    "vue3",
+    "cli tool",
+    "frontend development",
+    "web development",
+    "component federation",
+    "distributed frontend",
+    "frontend architecture",
+    "monorepo",
+    "build tools",
+    "javascript frameworks",
+    "vue.js"
+  ]
 }
