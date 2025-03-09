@@ -1,6 +1,6 @@
 {
   "name": "lidhium",
-  "version": "1.0.29",
+  "version": "1.0.30",
   "description": "micro-frontend cli packed with webpack",
   "main": "index.ts",
   "scripts": {
