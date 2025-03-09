@@ -127,6 +127,7 @@ module.exports = {
       name: getAppName(),
       filename: "remoteEntry.js",
       remotes: generateRemoteRoutes(),
+      exposes: getExposedComponents(),
       shared: {
         vue: { singleton: true, eager: true, requiredVersion: "^3.0.0" },
         vuex: { singleton: true, eager: true, requiredVersion: "^4.0.0" },
