@@ -1,6 +1,6 @@
 {
-  "name": "lidhro",
-  "version": "1.0.23",
+  "name": "lidhiumjs",
+  "version": "1.0.25",
   "description": "micro-frontend cli packed with webpack",
   "main": "index.ts",
   "scripts": {
@@ -11,7 +11,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lidhishc/lidhro.git"
+    "url": "https://github.com/lidhishc/lidhiumjs.git"
   },
   "dependencies": {
     "@types/commander": "^2.12.5",

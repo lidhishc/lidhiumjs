@@ -1,9 +1,9 @@
-# Lidhro
+# Lidhium JS
 
-[![npm version](https://img.shields.io/npm/v/lidhro.svg)](https://www.npmjs.com/package/lidhro)
+[![npm version](https://img.shields.io/npm/v/lidhiumjs.svg)](https://www.npmjs.com/package/lidhiumjs)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Downloads](https://img.shields.io/npm/dm/lidhro.svg)](https://www.npmjs.com/package/lidhro)
-[![GitHub issues](https://img.shields.io/github/issues/lidhishc/lidhro)](https://github.com/lidhishc/lidhro/issues)
+[![Downloads](https://img.shields.io/npm/dm/lidhiumjs.svg)](https://www.npmjs.com/package/lidhiumjs)
+[![GitHub issues](https://img.shields.io/github/issues/lidhishc/lidhiumjs)](https://github.com/lidhishc/lidhiumjs/issues)
 
 A powerful CLI tool for creating and managing micro-frontend applications with Webpack.
 
