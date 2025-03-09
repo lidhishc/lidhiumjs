@@ -4,14 +4,18 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const webpack = require("webpack");
 const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 const { ModuleFederationPlugin } = require("webpack").container;
-const { generateRemoteRoutes, getAppName } = require("./src/utils/utils");
+const {
+  generateRemoteRoutes,
+  getAppName,
+  getExposedComponents,
+} = require("./src/utils/utils");
 const TerserPlugin = require("terser-webpack-plugin");
 
 const isProduction = process.env.NODE_ENV === "production";
 
 module.exports = {
   mode: isProduction ? "production" : "development",
-  context: path.resolve(__dirname, "."), // Ensure correct path
+  context: path.resolve(__dirname, "."),
   target: "web",
 
   entry: "./src/main.ts",
@@ -22,7 +26,7 @@ module.exports = {
     path: path.resolve(__dirname, "dist"),
     filename: "bundle.[contenthash].js",
     clean: true,
-    publicPath: "auto",
+    publicPath: "auto", // Ensure correct asset loading
   },
 
   resolve: {
@@ -85,25 +89,15 @@ module.exports = {
       new TerserPlugin({
         terserOptions: {
           compress: {
-            drop_console: true, // Remove console logs in production
+            drop_console: true,
           },
           output: {
-            comments: false, // Remove comments
+            comments: false,
           },
         },
         extractComments: false,
       }),
     ],
-    splitChunks: {
-      chunks: "all",
-      cacheGroups: {
-        vendors: {
-          test: /[\\/]node_modules[\\/]/,
-          name: "vendors",
-          chunks: "all",
-        },
-      },
-    },
   },
 
   plugins: [
@@ -120,14 +114,13 @@ module.exports = {
       "process.env.NODE_ENV": JSON.stringify(
         process.env.NODE_ENV || "development"
       ),
-      __VUE_HMR_RUNTIME__: JSON.stringify(isProduction ? "undefined" : "true"),
     }),
 
     new ModuleFederationPlugin({
       name: getAppName(),
       filename: "remoteEntry.js",
+      exposes: getExposedComponents(), // Ensure components are exposed correctly
       remotes: generateRemoteRoutes(),
-      exposes: getExposedComponents(),
       shared: {
         vue: { singleton: true, eager: true, requiredVersion: "^3.0.0" },
         vuex: { singleton: true, eager: true, requiredVersion: "^4.0.0" },
@@ -144,7 +137,7 @@ module.exports = {
     ? undefined
     : {
         historyApiFallback: true,
-        hot: false,
+        hot: true,
         watchFiles: ["src/**/*"],
         headers: {
           "Access-Control-Allow-Origin": "*",
