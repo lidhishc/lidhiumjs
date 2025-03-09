@@ -5,37 +5,33 @@ const webpack = require("webpack");
 const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 const { ModuleFederationPlugin } = require("webpack").container;
 const {
-  generateRemoteRoutes,
-  getAppName,
   getExposedComponents,
+  getAppName,
+  generateRemoteRoutes,
 } = require("./src/utils/utils");
-const TerserPlugin = require("terser-webpack-plugin");
-
-const isProduction = process.env.NODE_ENV === "production";
+process.env.VUE_APP_BASE_URL = "/";
 
 module.exports = {
-  mode: isProduction ? "production" : "development",
-  context: path.resolve(__dirname, "."),
-  target: "web",
-
+  context: path.resolve(__dirname, "."), // Ensure correct path
+  mode: process.env.NODE_ENV || "development",
+  // Entry point
   entry: "./src/main.ts",
-
+  target: "web",
+  // Output configuration
   output: {
-    asyncChunks: true,
-    chunkFilename: "[name].[contenthash].js",
     path: path.resolve(__dirname, "dist"),
     filename: "bundle.[contenthash].js",
-    clean: true,
-    publicPath: "auto", // Ensure correct asset loading
+    clean: true, // Cleans the output directory before building
+    publicPath: "auto", // Needed for Module Federation
   },
-
+  // Resolve extensions and aliases
   resolve: {
     extensions: [".ts", ".js", ".vue"],
     alias: {
       "@": path.resolve(__dirname, "src"),
     },
   },
-
+  // Module rules for different file types
   module: {
     rules: [
       {
@@ -51,14 +47,18 @@ module.exports = {
         exclude: /node_modules/,
       },
       {
-        test: /\.(sc|sa|c)ss$/,
+        test: /\.scss$/,
         use: ["style-loader", "css-loader", "sass-loader"],
+      },
+      {
+        test: /\.css$/,
+        use: ["style-loader", "css-loader"],
       },
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
         type: "asset/resource",
         generator: {
-          filename: "assets/[name].[contenthash:8][ext]",
+          filename: "assets/[name].[hash:8][ext]",
         },
       },
       {
@@ -71,7 +71,7 @@ module.exports = {
               [
                 "@babel/preset-env",
                 {
-                  targets: "> 0.25%, not dead",
+                  targets: "> 0.25%, not dead", // Adjust based on your target browsers
                   useBuiltIns: "usage",
                   corejs: "3",
                 },
@@ -83,43 +83,21 @@ module.exports = {
     ],
   },
 
-  optimization: {
-    minimize: isProduction,
-    minimizer: [
-      new TerserPlugin({
-        terserOptions: {
-          compress: {
-            drop_console: true,
-          },
-          output: {
-            comments: false,
-          },
-        },
-        extractComments: false,
-      }),
-    ],
-  },
-
+  // Plugins
   plugins: [
     new VueLoaderPlugin(),
     new NodePolyfillPlugin(),
-
     new HtmlWebpackPlugin({
       template: "./public/index.html",
-      minify: isProduction ? { collapseWhitespace: true } : false,
     }),
-
+    // Define BASE_URL as a global variable
     new webpack.DefinePlugin({
       "process.env.BASE_URL": JSON.stringify("/"),
-      "process.env.NODE_ENV": JSON.stringify(
-        process.env.NODE_ENV || "development"
-      ),
     }),
-
     new ModuleFederationPlugin({
       name: getAppName(),
       filename: "remoteEntry.js",
-      exposes: getExposedComponents(), // Ensure components are exposed correctly
+      exposes: getExposedComponents(),
       remotes: generateRemoteRoutes(),
       shared: {
         vue: { singleton: true, eager: true, requiredVersion: "^3.0.0" },
@@ -133,18 +111,16 @@ module.exports = {
     }),
   ],
 
-  devServer: isProduction
-    ? undefined
-    : {
-        historyApiFallback: true,
-        hot: true,
-        watchFiles: ["src/**/*"],
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Methods":
-            "GET, POST, PUT, DELETE, PATCH, OPTIONS",
-          "Access-Control-Allow-Headers":
-            "X-Requested-With, content-type, Authorization",
-        },
-      },
+  //   // DevServer configuration
+  devServer: {
+    historyApiFallback: true,
+    // hot: true,
+    watchFiles: ["src/**/*"],
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH, OPTIONS",
+      "Access-Control-Allow-Headers":
+        "X-Requested-With, content-type, Authorization",
+    },
+  },
 };
