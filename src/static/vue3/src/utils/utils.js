@@ -3,7 +3,7 @@ const path = require("path");
 const { defineAsyncComponent } = require("vue");
 
 function readConfigFile() {
-  const filePath = path.join(__dirname, "../../../../lidhro.config.json");
+  const filePath = path.join(__dirname, "../../../../lidhium.config.json");
   try {
     const data = fs.readFileSync(filePath, "utf8");
     return JSON.parse(data);

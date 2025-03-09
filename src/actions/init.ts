@@ -7,14 +7,14 @@ import { printLibraryHeader } from "../utils/common";
 
 export default () => async (appName: string) => {
   printLibraryHeader();
-  const isFileExist = fs.existsSync(`./lidhro.config.json`);
+  const isFileExist = fs.existsSync(`./lidhium.config.json`);
 
   if (isFileExist) {
     console.error(
-      chalk.red(`lidhro.config.json already exists`),
+      chalk.red(`lidhium.config.json already exists`),
       chalk.green(
         `Run ${chalk.magenta(
-          `'lidhro generate <appName> <Port> for creating a new app'`
+          `'lidhium generate <appName> <Port> for creating a new app'`
         )}`
       )
     );
@@ -44,7 +44,7 @@ export default () => async (appName: string) => {
   console.log(chalk.green(`Creating a ${appName}`));
   createFolder(`./${appName}`);
   createFile(
-    `./${appName}/lidhro.config.json`,
+    `./${appName}/lidhium.config.json`,
     JSON.stringify({
       project: appName,
       webapp: selectedApp.toLowerCase(),
@@ -58,8 +58,8 @@ export default () => async (appName: string) => {
       name: appName,
       private: true,
       scripts: {
-        start: "lidhro start",
-        build: "lidhro build",
+        start: "lidhium start",
+        build: "lidhium build",
       },
       dependencies: {
         "core-js": "3.40.0",

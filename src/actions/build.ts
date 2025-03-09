@@ -6,7 +6,7 @@ export default () => async (appName: string) => {
   const configFile = getConfigFile();
 
   if (!configFile) {
-    console.error("lidhro.config.json not found");
+    console.error("lidhium.config.json not found");
     return;
   }
 

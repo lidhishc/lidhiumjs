@@ -1,9 +1,9 @@
 # Lidhium JS
 
-[![npm version](https://img.shields.io/npm/v/lidhiumjs.svg)](https://www.npmjs.com/package/lidhiumjs)
+[![npm version](https://img.shields.io/npm/v/lidhium.svg)](https://www.npmjs.com/package/lidhium)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Downloads](https://img.shields.io/npm/dm/lidhiumjs.svg)](https://www.npmjs.com/package/lidhiumjs)
-[![GitHub issues](https://img.shields.io/github/issues/lidhishc/lidhiumjs)](https://github.com/lidhishc/lidhiumjs/issues)
+[![Downloads](https://img.shields.io/npm/dm/lidhium.svg)](https://www.npmjs.com/package/lidhium)
+[![GitHub issues](https://img.shields.io/github/issues/lidhishc/lidhium)](https://github.com/lidhishc/lidhium/issues)
 
 A powerful CLI tool for creating and managing micro-frontend applications with Webpack.
 
@@ -17,7 +17,7 @@ A powerful CLI tool for creating and managing micro-frontend applications with W
 ## Installation
 
 ```bash
-npm install -g lidhro
+npm install -g lidhium
 ```
 
 ## Usage
@@ -25,25 +25,25 @@ npm install -g lidhro
 ### Create a new project
 
 ```bash
-lidhro init my-app
+lidhium init my-app
 ```
 
 ### Generate a new micro-frontend
 
 ```bash
-lidhro generate app-name 3000
+lidhium generate app-name 3000
 ```
 
 ### Start development server
 
 ```bash
-lidhro start app-name
+lidhium start app-name
 ```
 
 ### Build for production
 
 ```bash
-lidhro build app-name
+lidhium build app-name
 ```
 
 ## Commands
@@ -80,6 +80,6 @@ Lidhish C
 
 ## Links
 
-- [NPM Package](https://www.npmjs.com/package/lidhro)
-- [GitHub Repository](https://github.com/lidhishc/lidhro)
-- [Issues](https://github.com/lidhishc/lidhro/issues)
+- [NPM Package](https://www.npmjs.com/package/lidhium)
+- [GitHub Repository](https://github.com/lidhishc/lidhium)
+- [Issues](https://github.com/lidhishc/lidhium/issues)

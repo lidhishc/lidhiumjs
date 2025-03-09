@@ -1,5 +1,5 @@
 {
-  "name": "lidhiumjs",
+  "name": "lidhium",
   "version": "1.0.25",
   "description": "micro-frontend cli packed with webpack",
   "main": "index.ts",
@@ -27,7 +27,7 @@
     "typescript": "^5.7.3"
   },
   "bin": {
-    "lidhro": "./dist/index.js"
+    "lidhium": "./dist/index.js"
   },
   "devDependencies": {
     "ajv": "^8.17.1",

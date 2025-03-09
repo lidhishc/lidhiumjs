@@ -12,15 +12,15 @@ export async function createApp({
 }) {
   let fileContent = {} as any;
   let isFileExist = false;
-  isFileExist = fs.existsSync(`./lidhro.config.json`);
+  isFileExist = fs.existsSync(`./lidhium.config.json`);
   if (!isFileExist) {
     console.error(
-      chalk.red(`lidhro.config.json not found`),
-      chalk.green(`Run ${chalk.magenta(`'lidhro init'`)}`)
+      chalk.red(`lidhium.config.json not found`),
+      chalk.green(`Run ${chalk.magenta(`'lidhium init'`)}`)
     );
     return;
   }
-  fileContent = fs.readFileSync(`./lidhro.config.json`, "utf-8");
+  fileContent = fs.readFileSync(`./lidhium.config.json`, "utf-8");
   const config = JSON.parse(fileContent);
 
   // check if app already exists

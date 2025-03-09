@@ -1,11 +1,11 @@
 import inquirer from "inquirer";
-import { getAppName, updateExposedComponents } from "../utils/common";
+import { getAppName } from "../utils/common";
 import { getConfigFile } from "../utils/common";
 import fs from "fs";
 
 export default function bindActions() {
   return async () => {
-    const configJsonPath = "./../../lidhro.config.json";
+    const configJsonPath = "./../../lidhium.config.json";
     const configFile = getConfigFile(configJsonPath, true);
     const appName = getAppName();
     if (!configFile) {

@@ -6,7 +6,7 @@ import path from "path";
 export const printLibraryHeader = () => {
   console.log(
     chalk.yellow(
-      flinget.textSync("LidhRo", {
+      flinget.textSync("Lidhium", {
         horizontalLayout: "full",
         font: "Big Money-ne",
         whitespaceBreak: true,
@@ -30,7 +30,7 @@ export const updateAppConfig = ({
   remotes: object;
   exposedComponents: object;
 }) => {
-  const configJsonPath = `./lidhro.config.json`;
+  const configJsonPath = `./lidhium.config.json`;
   const appConfig = {
     port,
     appType,
@@ -47,16 +47,16 @@ export const getConfigFile = (
 ) => {
   let fileContent = {} as any;
   let isFileExist = false;
-  isFileExist = fs.existsSync(configPath || `./lidhro.config.json`);
+  isFileExist = fs.existsSync(configPath || `./lidhium.config.json`);
   if (!isFileExist) {
     !skipLog &&
       console.error(
-        chalk.red(`lidhro.config.json not found`),
-        chalk.green(`Run ${chalk.magenta(`'lidhro init'`)}`)
+        chalk.red(`lidhium.config.json not found`),
+        chalk.green(`Run ${chalk.magenta(`'lidhium init'`)}`)
       );
     return;
   }
-  fileContent = fs.readFileSync(configPath || `./lidhro.config.json`, "utf-8");
+  fileContent = fs.readFileSync(configPath || `./lidhium.config.json`, "utf-8");
   return JSON.parse(fileContent);
 };
 
@@ -69,7 +69,7 @@ export const updateExposedComponents = ({
   componentName: string;
   componentPath: string;
 }) => {
-  const configJsonPath = `./../../lidhro.config.json`;
+  const configJsonPath = `./../../lidhium.config.json`;
   const currentConfig = getConfigFile(configJsonPath);
   if (!currentConfig) {
     return;
