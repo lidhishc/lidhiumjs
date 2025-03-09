@@ -114,7 +114,7 @@ module.exports = {
   //   // DevServer configuration
   devServer: {
     historyApiFallback: true,
-    // hot: true,
+    hot: true,
     watchFiles: ["src/**/*"],
     headers: {
       "Access-Control-Allow-Origin": "*",
