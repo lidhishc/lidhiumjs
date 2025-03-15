@@ -9,7 +9,7 @@ export default function bindActions() {
     const configFile = getConfigFile(configJsonPath, true);
     const appName = getAppName();
     if (!configFile) {
-      console.error("Run bind from App's root of the project");
+      console.log("Please run this command in the app directory");
       return;
     }
     const apps = configFile.apps;

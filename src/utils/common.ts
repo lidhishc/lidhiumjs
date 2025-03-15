@@ -70,8 +70,9 @@ export const updateExposedComponents = ({
   componentPath: string;
 }) => {
   const configJsonPath = `./../../lidhium.config.json`;
-  const currentConfig = getConfigFile(configJsonPath);
+  const currentConfig = getConfigFile(configJsonPath, true);
   if (!currentConfig) {
+    console.log(chalk.red("Please run this command in the app directory"));
     return;
   }
   if (!currentConfig.apps[appName]) {
