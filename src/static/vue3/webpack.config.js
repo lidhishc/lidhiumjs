@@ -22,7 +22,8 @@ module.exports = {
     path: path.resolve(__dirname, "dist"),
     filename: "bundle.[contenthash].js",
     clean: true, // Cleans the output directory before building
-    publicPath: "auto", // Needed for Module Federation
+    publicPath: "auto", // Needed for Module Federation,
+    chunkFilename: "[name].[contenthash].js",
   },
   // Resolve extensions and aliases
   resolve: {
