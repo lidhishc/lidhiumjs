@@ -4,6 +4,8 @@ import path from "path";
 export function createDevServer(port: number = 3000) {
   const app = express();
 
+  console.log(process.cwd());
+
   // Serve static files from the dev-tool/dist directory
   app.use(express.static(path.join(__dirname, "../../dev-tool/dist")));
 
