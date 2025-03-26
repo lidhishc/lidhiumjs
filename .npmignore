@@ -6,3 +6,7 @@ node_modules
 .temp
 !/dist/src
 /src
+
+dev-tool
+!dev-tool/dist
+!dev-tool/dist/**/*

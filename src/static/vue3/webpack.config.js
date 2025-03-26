@@ -10,6 +10,7 @@ const {
   generateRemoteRoutes,
 } = require("./src/utils/utils");
 process.env.VUE_APP_BASE_URL = "/";
+const CompressionPlugin = require("compression-webpack-plugin");
 
 module.exports = {
   context: path.resolve(__dirname, "."), // Ensure correct path
@@ -91,6 +92,12 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: "./public/index.html",
     }),
+    new CompressionPlugin({
+      algorithm: "gzip",
+      test: /\.(js|css|html|svg)$/,
+      threshold: 10240, // Only compress files > 10kb
+      minRatio: 0.8, // Only compress if compression ratio is better than 0.8
+    }),
     // Define BASE_URL as a global variable
     new webpack.DefinePlugin({
       "process.env.BASE_URL": JSON.stringify("/"),
@@ -108,6 +115,7 @@ module.exports = {
           eager: true,
           requiredVersion: "^4.0.0",
         },
+        // Add more shared dependencies as needed
       },
     }),
   ],
@@ -122,6 +130,10 @@ module.exports = {
       "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH, OPTIONS",
       "Access-Control-Allow-Headers":
         "X-Requested-With, content-type, Authorization",
+      "Content-Security-Policy":
+        "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline';",
     },
   },
+  devtool:
+    process.env.NODE_ENV === "development" ? "eval-source-map" : "source-map",
 };

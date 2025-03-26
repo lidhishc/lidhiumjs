@@ -87,6 +87,17 @@ function getExposedComponents() {
   return components;
 }
 
+const config = {
+  development: {
+    publicPath: "auto",
+    devtool: "eval-source-map",
+  },
+  production: {
+    publicPath: "/",
+    devtool: "source-map",
+  },
+}[process.env.NODE_ENV];
+
 module.exports = {
   readConfigFile,
   getAppName,
