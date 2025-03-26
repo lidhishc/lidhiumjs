@@ -7,6 +7,18 @@ node_modules
 !/dist/src
 /src
 
-dev-tool/*
-!dev-tool/dist
-!dev-tool/dist/**/*
+# Ignore dev-tool files except dist
+dev-tool/.vscode
+dev-tool/node_modules
+dev-tool/src
+dev-tool/public
+dev-tool/*.json
+dev-tool/*.ts
+dev-tool/*.md
+dev-tool/.gitignore
+dev-tool/tsconfig.*.json
+dev-tool/vite.config.ts
+dev-tool/webpack.config.js
+dev-tool/index.html
+dev-tool/README.md
+dev-tool/yarn.lock

@@ -1,0 +1,1 @@
+{"root":["./src/commands.ts","./src/index.ts","./src/intefaces.ts","./src/actions/bind.ts","./src/actions/build.ts","./src/actions/create-app.ts","./src/actions/expose.ts","./src/actions/generate.ts","./src/actions/init.ts","./src/actions/start.ts","./src/file-manager/index.ts","./src/utils/common.ts","./src/utils/devtool.ts"],"version":"5.8.2"}
