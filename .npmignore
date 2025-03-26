@@ -7,6 +7,6 @@ node_modules
 !/dist/src
 /src
 
-dev-tool
+dev-tool/**/*
 !dev-tool/dist
 !dev-tool/dist/**/*
