@@ -53,7 +53,7 @@ export async function createApp({
       appType: "host",
       appName,
       currentConfig: config,
-      remotes: {},
+      remotes: [],
       exposedComponents: {},
     });
   } else {
@@ -62,7 +62,7 @@ export async function createApp({
       appType: "remote",
       appName,
       currentConfig: config,
-      remotes: {},
+      remotes: [],
       exposedComponents: {},
     });
   }

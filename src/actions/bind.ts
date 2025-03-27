@@ -23,12 +23,12 @@ export default function bindActions() {
     ]);
     console.log(selectedDestinationApp);
 
-    const destinationAppConfig = apps[selectedDestinationApp];
-    const remoteURL = `http://localhost:${destinationAppConfig.port}`;
+    const currentRemotes = (configFile.apps[appName].remotes as string[]) || [];
 
-    console.log(`remoteURL ${remoteURL} `);
+    configFile.apps[appName].remotes = [
+      ...new Set(currentRemotes).add(selectedDestinationApp),
+    ];
 
-    configFile.apps[appName].remotes[selectedDestinationApp] = remoteURL;
     fs.writeFileSync(configJsonPath, JSON.stringify(configFile, null, 2));
   };
 }

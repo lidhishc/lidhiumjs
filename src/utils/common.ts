@@ -31,11 +31,15 @@ export const updateAppConfig = ({
   exposedComponents: object;
 }) => {
   const configJsonPath = `./lidhium.config.json`;
+  const baseURL = process.env.baseURL
+    ? process.env.baseURL
+    : `http://localhost:${port}`;
   const appConfig = {
     port,
     appType,
     remotes,
     exposedComponents,
+    url: baseURL,
   };
   currentConfig.apps[appName] = appConfig;
   fs.writeFileSync(configJsonPath, JSON.stringify(currentConfig, null, 2));

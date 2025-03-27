@@ -1,0 +1,60 @@
+{
+  "project": "myapp",
+  "webapp": "vue3",
+  "bundler": "webpack",
+  "apps": {
+    "host": {
+      "port": "3004",
+      "appType": "host",
+      "remotes": ["remote1", "remote2", "remote3", "remote4"]
+    },
+    "exposedComponents": {}
+  },
+  "remote1": {
+    "port": "3005",
+    "appType": "remote",
+    "url": "http://localhost:3005",
+    "remotes": ["remote4", "remote3"],
+    "exposedComponents": {
+      "Hello": {
+        "source": "./src/views/Hello.vue",
+        "remoteComponentValue": "remote1/Hello"
+      }
+    }
+  },
+  "remote2": {
+    "port": "3006",
+    "appType": "remote",
+    "url": "http://localhost:3006",
+    "remotes": ["remote4"],
+    "exposedComponents": {
+      "Hello1": {
+        "source": "./src/views/Hello1.vue",
+        "remoteComponentValue": "remote2/Hello1"
+      }
+    }
+  },
+  "remote3": {
+    "port": "3007",
+    "appType": "remote",
+    "url": "https://aurtrio-staging--remote-app-lidh-0esqy5qk.web.app",
+    "remotes": ["remote4"],
+    "exposedComponents": {
+      "Hello4": {
+        "source": "./src/views/Hello4.vue",
+        "remoteComponentValue": "remote3/Hello4"
+      },
+      "MyApp": {
+        "source": "./src/views/MyApp.vue",
+        "remoteComponentValue": "remote3/MyApp"
+      }
+    }
+  },
+  "remote4": {
+    "port": "3008",
+    "appType": "remote",
+    "url": "http://localhost:3008",
+    "remotes": ["remote1", "remote2", "remote3"],
+    "exposedComponents": {}
+  }
+}

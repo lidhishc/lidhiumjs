@@ -21,6 +21,7 @@
     "@types/mocha": "^10.0.10",
     "@types/node": "^22.10.10",
     "chalk": "^4.1.2",
+    "cors": "^2.8.5",
     "cpx": "^1.5.0",
     "execa": "^5.1.1",
     "express": "^4.21.2",
@@ -33,6 +34,7 @@
     "lidhium": "./dist/index.js"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.17",
     "ajv": "^8.17.1",
     "ajv-keywords": "^5.1.0",
     "schema-utils": "^4.3.0"

@@ -124,6 +124,7 @@ export default () => async (appName: string) => {
         "vue-template-compiler": "^2.7.16",
         "webpack-bundle-analyzer": "^4.10.2",
         "webpack-dev-server": "^5.2.0",
+        "compression-webpack-plugin": "^11.1.0",
       },
     })
   );

@@ -1,10 +1,11 @@
 import { Command } from "commander";
-import initActions from "./actions/init";
-import generateActions from "./actions/generate";
-import startActions from "./actions/start";
-import buildActions from "./actions/build";
-import exposeActions from "./actions/expose";
 import bindActions from "./actions/bind";
+import buildActions from "./actions/build";
+import devToolActions from "./actions/devTool";
+import exposeActions from "./actions/expose";
+import generateActions from "./actions/generate";
+import initActions from "./actions/init";
+import startActions from "./actions/start";
 
 export default function addGlobalCommand(command: Command) {
   command.command("init <appName>").action(initActions());
@@ -13,4 +14,5 @@ export default function addGlobalCommand(command: Command) {
   command.command("build <appName>").action(buildActions());
   command.command("expose <componentPath>").action(exposeActions());
   command.command("bind").action(bindActions());
+  command.command("dev-tool").action(devToolActions());
 }

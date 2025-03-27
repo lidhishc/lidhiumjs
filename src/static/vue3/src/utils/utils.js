@@ -23,21 +23,30 @@ function generateRemoteRoutes() {
   try {
     const configFile = readConfigFile();
     const currentFolder = getAppName();
-
-    console.log("Config file:", currentFolder);
     const currentApp = configFile.apps[currentFolder];
+
     if (!currentApp || !currentApp.remotes) {
       return {};
     }
 
-    const remotes = Object.entries(currentApp.remotes).reduce(
-      (acc, [remoteName, remoteUrl]) => {
-        acc[remoteName] = `${remoteName}@${remoteUrl}/remoteEntry.js`;
-        return acc;
-      },
-      {}
-    );
-    console.log("Generated remotes:", remotes);
+    const remotes = {};
+    for (const remoteName of currentApp?.remotes || []) {
+      try {
+        const remoteApp = configFile.apps[remoteName];
+        if (remoteApp && remoteApp.url) {
+          remotes[remoteName] = `${remoteName}@${remoteApp.url}/remoteEntry.js`;
+        } else {
+          console.warn(`Remote app ${remoteName} not found or missing URL`);
+        }
+      } catch (remoteError) {
+        console.warn(
+          `Error processing remote ${remoteName}:`,
+          remoteError.message
+        );
+      }
+    }
+    console.log("Remotes:", remotes);
+
     return remotes;
   } catch (error) {
     console.warn("Could not generate remote routes:", error.message);

@@ -10,9 +10,6 @@
         <p>Type: {{ app.appType }}</p>
       </div>
     </div>
-    <div v-if="error" class="error">
-      {{ error }}
-    </div>
   </div>
 </template>
 
@@ -39,21 +36,11 @@ export default defineComponent({
   setup() {
     const config = ref<LidhiumConfig | null>(null);
     const projectName = ref("");
-    const error = ref("");
 
     const fetchConfig = async () => {
       try {
-        console.log("Fetching config from:", "/api/lidhium-config");
         const response = await fetch("/api/lidhium-config");
-        console.log("Response status:", response.status);
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
         const data = await response.json();
-        console.log("Received config:", data);
-
         config.value = data;
         projectName.value = data.project;
       } catch (error) {
@@ -68,7 +55,6 @@ export default defineComponent({
     return {
       config,
       projectName,
-      error,
     };
   },
 });
@@ -88,13 +74,5 @@ h1 {
 h2 {
   color: #42b983;
   margin-top: 20px;
-}
-
-.error {
-  color: red;
-  padding: 10px;
-  margin: 10px 0;
-  border: 1px solid red;
-  border-radius: 4px;
 }
 </style>
