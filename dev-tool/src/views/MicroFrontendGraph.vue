@@ -30,6 +30,13 @@ interface GraphNode extends d3.SimulationNodeDatum {
   type: string;
   port: string;
   layer: number;
+  x?: number;
+  y?: number;
+  fx?: number | null;
+  fy?: number | null;
+  vx?: number;
+  vy?: number;
+  index?: number;
 }
 
 interface GraphLink {
@@ -46,6 +53,26 @@ export default defineComponent({
     const graphContainer = ref<HTMLElement | null>(null);
     let svg: any = null;
     let simulation: any = null;
+
+    const fetchConfig = async () => {
+      try {
+        console.log("Fetching config from:", "/api/lidhium-config");
+        const response = await fetch("/api/lidhium-config");
+        console.log("Response status:", response.status);
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log("Received config:", data);
+
+        config.value = data;
+        projectName.value = data.project;
+      } catch (error) {
+        console.error("Failed to fetch lidhium config:", error);
+      }
+    };
 
     const graphData = computed(() => {
       if (!config.value) {
@@ -142,38 +169,32 @@ export default defineComponent({
 
       // Adjust simulation forces for better connections
       simulation = d3
-        .forceSimulation(graphData.value.nodes)
+        .forceSimulation<GraphNode>(graphData.value.nodes)
         .force(
           "link",
           d3
-            .forceLink(graphData.value.links)
-            .id((d) => d.id)
-            .distance((d) => {
-              if (d.type === "host-remote") return 250; // Increased from 150
-              if (d.type === "remote-remote") return 200; // Increased from 120
-              return 150; // Increased from 80
+            .forceLink<GraphNode, GraphLink>(graphData.value.links)
+            .id((d: GraphNode) => d.id)
+            .distance((d: GraphLink) => {
+              if (d.type === "host-remote") return 250;
+              if (d.type === "remote-remote") return 200;
+              return 150;
             })
-            .strength(0.7) // Reduced from 1.0 to allow more flexibility
+            .strength(0.7)
         )
-        .force("charge", d3.forceManyBody().strength(-1200)) // Increased repulsion from -800
-        .force(
-          "x",
-          d3.forceX(width / 2).strength(0.05) // Reduced from 0.1 to allow more spread
-        )
-        .force(
-          "y",
-          d3.forceY(height / 2).strength(0.05) // Reduced from 0.1 to allow more spread
-        )
+        .force("charge", d3.forceManyBody<GraphNode>().strength(-1200))
+        .force("x", d3.forceX<GraphNode>(width / 2).strength(0.05))
+        .force("y", d3.forceY<GraphNode>(height / 2).strength(0.05))
         .force(
           "collision",
           d3
-            .forceCollide()
-            .radius((d) => {
-              if (d.type === "host") return 100; // Increased from 70
-              if (d.type === "remote") return 80; // Increased from 60
-              return 60; // Increased from 50
+            .forceCollide<GraphNode>()
+            .radius((d: GraphNode) => {
+              if (d.type === "host") return 100;
+              if (d.type === "remote") return 80;
+              return 60;
             })
-            .strength(0.8) // Increased from 0.5 for stronger collision avoidance
+            .strength(0.8)
         );
 
       // Create arrow markers
@@ -201,7 +222,7 @@ export default defineComponent({
         .selectAll("path")
         .data(graphData.value.links)
         .join("path")
-        .attr("stroke", (d) => {
+        .attr("stroke", (d: GraphLink) => {
           switch (d.type) {
             case "host-remote":
               return "#4CAF50";
@@ -211,30 +232,30 @@ export default defineComponent({
               return "#757575";
           }
         })
-        .attr("stroke-width", (d) => {
+        .attr("stroke-width", (d: GraphLink) => {
           if (d.type === "host-remote") return 2;
           if (d.type === "remote-remote") return 1.5;
           return 1;
         })
         .attr("fill", "none")
-        .attr("marker-end", (d) => `url(#${d.type})`);
+        .attr("marker-end", (d: GraphLink) => `url(#${d.type})`);
 
-      // Create nodes with larger sizes
+      // Create nodes
       const node = svg
         .append("g")
         .selectAll("g")
         .data(graphData.value.nodes)
         .join("g");
 
-      // Add node circles with increased sizes
+      // Add node circles
       node
         .append("circle")
-        .attr("r", (d) => {
+        .attr("r", (d: GraphNode) => {
           if (d.type === "host") return 60;
           if (d.type === "remote") return 50;
           return 40;
         })
-        .style("fill", (d) => {
+        .style("fill", (d: GraphNode) => {
           switch (d.type) {
             case "host":
               return "#4CAF50";
@@ -253,7 +274,7 @@ export default defineComponent({
         .attr("dy", -5)
         .attr("text-anchor", "middle")
         .attr("fill", "#ffffff")
-        .style("font-size", (d) => {
+        .style("font-size", (d: GraphNode) => {
           if (d.type === "host") return "16px";
           if (d.type === "remote") return "14px";
           return "12px";
@@ -261,7 +282,7 @@ export default defineComponent({
         .style("font-weight", "500")
         .style("font-family", "system-ui, -apple-system, sans-serif")
         .style("pointer-events", "none")
-        .text((d) => d.name);
+        .text((d: GraphNode) => d.name);
 
       // Add port labels inside nodes
       node
@@ -269,7 +290,7 @@ export default defineComponent({
         .attr("dy", 15)
         .attr("text-anchor", "middle")
         .attr("fill", "#ffffff")
-        .style("font-size", (d) => {
+        .style("font-size", (d: GraphNode) => {
           if (d.type === "host") return "12px";
           return "11px";
         })
@@ -277,66 +298,96 @@ export default defineComponent({
         .style("font-weight", "400")
         .style("opacity", "0.9")
         .style("pointer-events", "none")
-        .text((d) => `Port: ${d.port}`);
+        .text((d: GraphNode) => `Port: ${d.port}`);
 
       // Update path generation
       simulation.on("tick", () => {
         // Contain nodes within bounds
-        graphData.value.nodes.forEach((d) => {
-          d.x = Math.max(padding, Math.min(width - padding, d.x));
-          d.y = Math.max(padding, Math.min(height - padding, d.y));
-        });
+        graphData.value.nodes.forEach(
+          (d: GraphNode & { x?: number; y?: number }) => {
+            d.x = Math.max(padding, Math.min(width - padding, d.x || 0));
+            d.y = Math.max(padding, Math.min(height - padding, d.y || 0));
+          }
+        );
 
         // Update link paths
-        link.attr("d", (d) => {
-          const source = d.source;
-          const target = d.target;
+        link.attr("d", (d: any) => {
+          const source = d.source as GraphNode;
+          const target = d.target as GraphNode;
 
           // Calculate node radius
           const sourceRadius =
             source.type === "host" ? 60 : source.type === "remote" ? 50 : 40;
           const targetRadius =
             target.type === "host" ? 60 : target.type === "remote" ? 50 : 40;
-
           // Calculate the total distance
-          const dx = target.x - source.x;
-          const dy = target.y - source.y;
+          const dx =
+            ((target as GraphNode & { x?: number }).x || 0) -
+            ((source as GraphNode & { x?: number }).x || 0);
+          const dy =
+            ((target as GraphNode & { y?: number }).y || 0) -
+            ((source as GraphNode & { y?: number }).y || 0);
           const distance = Math.sqrt(dx * dx + dy * dy);
+
+          if (distance === 0) return "";
 
           // Calculate the unit vector
           const unitX = dx / distance;
           const unitY = dy / distance;
-
           // Calculate start and end points
-          const startX = source.x + unitX * sourceRadius;
-          const startY = source.y + unitY * sourceRadius;
-          const endX = target.x - unitX * (targetRadius + 5); // Reduced gap to 5px
-          const endY = target.y - unitY * (targetRadius + 5);
+          const startX =
+            ((source as GraphNode & { x?: number }).x || 0) +
+            unitX * sourceRadius;
+          const startY =
+            ((source as GraphNode & { y?: number }).y || 0) +
+            unitY * sourceRadius;
+          const endX =
+            ((target as GraphNode & { x?: number }).x || 0) -
+            unitX * (targetRadius + 5);
+          const endY =
+            ((target as GraphNode & { y?: number }).y || 0) -
+            unitY * (targetRadius + 5);
 
           return `M${startX},${startY}L${endX},${endY}`;
         });
 
-        node.attr("transform", (d) => `translate(${d.x},${d.y})`);
+        node.attr(
+          "transform",
+          (d: GraphNode & { x?: number; y?: number }) =>
+            `translate(${d.x || 0},${d.y || 0})`
+        );
       });
 
       // Add drag behavior
       node.call(
         d3
-          .drag<any, GraphNode>()
-          .on("start", (event, d) => {
-            if (!event.active) simulation.alphaTarget(0.3).restart();
-            d.fx = d.x;
-            d.fy = d.y;
-          })
-          .on("drag", (event, d) => {
-            d.fx = event.x;
-            d.fy = event.y;
-          })
-          .on("end", (event, d) => {
-            if (!event.active) simulation.alphaTarget(0);
-            d.fx = null;
-            d.fy = null;
-          })
+          .drag<SVGGElement, GraphNode>()
+          .on(
+            "start",
+            (event: d3.D3DragEvent<SVGGElement, GraphNode, GraphNode>) => {
+              if (!event.active) simulation.alphaTarget(0.3).restart();
+              const d = event.subject;
+              d.fx = d.x;
+              d.fy = d.y;
+            }
+          )
+          .on(
+            "drag",
+            (event: d3.D3DragEvent<SVGGElement, GraphNode, GraphNode>) => {
+              const d = event.subject;
+              d.fx = event.x;
+              d.fy = event.y;
+            }
+          )
+          .on(
+            "end",
+            (event: d3.D3DragEvent<SVGGElement, GraphNode, GraphNode>) => {
+              if (!event.active) simulation.alphaTarget(0);
+              const d = event.subject;
+              d.fx = null;
+              d.fy = null;
+            }
+          )
       );
 
       console.log("Graph initialization complete");
@@ -347,62 +398,64 @@ export default defineComponent({
       createGraph();
     };
 
-    onMounted(() => {
-      config.value = {
-        project: "myapp",
-        webapp: "vue3",
-        bundler: "webpack",
-        apps: {
-          shell: {
-            port: "3000",
-            appType: "host",
-            remotes: ["header", "body", "tile1"],
-            exposedComponents: {},
-            url: "http://localhost:3000",
-          },
-          header: {
-            port: "3001",
-            appType: "remote",
-            remotes: [],
-            exposedComponents: {
-              TestMyAPP: {
-                source: "./src/components/TestMyAPP.vue",
-                remoteComponentValue: "header/TestMyAPP",
-              },
-            },
-            url: "http://localhost:3001",
-          },
-          body: {
-            port: "3002",
-            appType: "remote",
-            remotes: ["header"],
-            exposedComponents: {
-              Body: {
-                source: "./src/components/Body.vue",
-                remoteComponentValue: "body/Body",
-              },
-            },
-            url: "http://localhost:3002",
-          },
-          tile1: {
-            port: "3003",
-            appType: "remote",
-            remotes: ["header"],
-            exposedComponents: {
-              Body: {
-                source: "./src/components/Body.vue",
-                remoteComponentValue: "body/Body",
-              },
-            },
-            url: "http://localhost:3002",
-          },
-        },
-      };
+    onMounted(async () => {
+      // config.value = {
+      //   project: "myapp",
+      //   webapp: "vue3",
+      //   bundler: "webpack",
+      //   apps: {
+      //     shell: {
+      //       port: "3000",
+      //       appType: "host",
+      //       remotes: ["header", "body", "tile1"],
+      //       exposedComponents: {},
+      //       url: "http://localhost:3000",
+      //     },
+      //     header: {
+      //       port: "3001",
+      //       appType: "remote",
+      //       remotes: [],
+      //       exposedComponents: {
+      //         TestMyAPP: {
+      //           source: "./src/components/TestMyAPP.vue",
+      //           remoteComponentValue: "header/TestMyAPP",
+      //         },
+      //       },
+      //       url: "http://localhost:3001",
+      //     },
+      //     body: {
+      //       port: "3002",
+      //       appType: "remote",
+      //       remotes: ["header"],
+      //       exposedComponents: {
+      //         Body: {
+      //           source: "./src/components/Body.vue",
+      //           remoteComponentValue: "body/Body",
+      //         },
+      //       },
+      //       url: "http://localhost:3002",
+      //     },
+      //     tile1: {
+      //       port: "3003",
+      //       appType: "remote",
+      //       remotes: ["header"],
+      //       exposedComponents: {
+      //         Body: {
+      //           source: "./src/components/Body.vue",
+      //           remoteComponentValue: "body/Body",
+      //         },
+      //       },
+      //       url: "http://localhost:3002",
+      //     },
+      //   },
+      // };
 
-      projectName.value = config.value.project;
-      console.log("Config loaded:", config.value);
+      // projectName.value = config.value.project;
+
+      await fetchConfig();
 
       // Initialize graph after a short delay to ensure container is ready
+
       setTimeout(() => {
         if (graphContainer.value) {
           createGraph();
@@ -450,7 +503,6 @@ h1 {
 
 .graph-container {
   flex: 1;
-  width: 100%;
   border: none;
   background-color: #ffffff;
   overflow: hidden;

@@ -43,14 +43,13 @@ export default {
 <style scoped>
 .app-container {
   min-height: 100vh;
-  padding: 2rem;
+
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
 }
 
 .header {
   text-align: center;
   margin-bottom: 4rem;
-  padding: 2rem;
 }
 
 .header h1 {

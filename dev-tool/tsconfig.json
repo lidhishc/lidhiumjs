@@ -13,6 +13,7 @@
     "useDefineForClassFields": true,
     "sourceMap": true,
     "baseUrl": ".",
+    "outDir": "./dist",
     "paths": {
       "@/*": [
         "src/*"
