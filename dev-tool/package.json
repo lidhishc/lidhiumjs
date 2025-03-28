@@ -10,11 +10,13 @@
   },
   "dependencies": {
     "@types/cors": "^2.8.17",
+    "@types/d3": "^7.4.3",
     "cors": "^2.8.5",
     "d3": "^7.9.0",
     "vis-data": "^7.1.9",
     "vis-network": "^9.1.9",
-    "vue": "^3.5.13"
+    "vue": "^3.5.13",
+    "vue-force-graph": "^0.1.2"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.3",

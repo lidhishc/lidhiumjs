@@ -1,24 +1,12 @@
 <template>
   <div class="app">
-    <h1>{{ projectName }}</h1>
-    <div v-if="config">
-      <p>Webapp Type: {{ config.webapp }}</p>
-      <p>Bundler: {{ config.bundler }}</p>
-      <div v-for="(app, name) in config.apps" :key="name">
-        <h2>{{ name }} App</h2>
-        <p>Port: {{ app.port }}</p>
-        <p>Type: {{ app.appType }}</p>
-      </div>
-    </div>
-    <div v-if="error" class="error">
-      {{ error }}
-    </div>
+    <MicroFrontendGraph />
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref, onMounted } from "vue";
-
+import MicroFrontendGraph from "./views/MicroFrontendGraph.vue";
 interface LidhiumConfig {
   project: string;
   webapp: string;
@@ -61,15 +49,18 @@ export default defineComponent({
       }
     };
 
-    onMounted(() => {
-      fetchConfig();
-    });
+    // onMounted(() => {
+    //   fetchConfig();
+    // });
 
     return {
       config,
       projectName,
       error,
     };
+  },
+  components: {
+    MicroFrontendGraph,
   },
 });
 </script>
