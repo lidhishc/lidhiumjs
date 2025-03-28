@@ -121,95 +121,81 @@ export default defineComponent({
       // Clear previous graph
       d3.select(graphContainer.value).selectAll("*").remove();
 
-      // Use full window dimensions
-      const width = window.innerWidth;
-      const height = window.innerHeight - 60; // Account for header
+      // Use full window dimensions with padding
+      const width = window.innerWidth * 0.9; // 90% of window width
+      const height = (window.innerHeight - 60) * 0.9; // 90% of available height
+      const padding = 100; // Padding from edges
 
-      // Create SVG with full dimensions
+      // Create SVG with adjusted dimensions
       svg = d3
         .select(graphContainer.value)
         .append("svg")
         .attr("width", "100%")
         .attr("height", "100%")
-        .attr("viewBox", [0, 0, width, height])
+        .attr("viewBox", [
+          -padding,
+          -padding,
+          width + 2 * padding,
+          height + 2 * padding,
+        ])
         .style("background-color", "#ffffff");
 
-      // Adjust simulation forces for better organization
+      // Adjust simulation forces for better connections
       simulation = d3
-        .forceSimulation<GraphNode>(graphData.value.nodes)
+        .forceSimulation(graphData.value.nodes)
         .force(
           "link",
           d3
-            .forceLink<GraphNode, GraphLink>(graphData.value.links)
+            .forceLink(graphData.value.links)
             .id((d) => d.id)
             .distance((d) => {
-              // Increase distances for better spacing
-              if (d.type === "host-remote") return width * 0.25;
-              if (d.type === "remote-remote") return width * 0.25;
-              return width * 0.15; // Component links
+              if (d.type === "host-remote") return 250; // Increased from 150
+              if (d.type === "remote-remote") return 200; // Increased from 120
+              return 150; // Increased from 80
             })
+            .strength(0.7) // Reduced from 1.0 to allow more flexibility
         )
-        .force("charge", d3.forceManyBody().strength(-2000))
+        .force("charge", d3.forceManyBody().strength(-1200)) // Increased repulsion from -800
         .force(
           "x",
-          d3
-            .forceX<GraphNode>()
-            .x((d) => {
-              // Create clear horizontal layers
-              if (d.type === "remote") {
-                return width * 0.3; // Remote apps on the left
-              }
-              if (d.type === "host") {
-                return width * 0.7; // Host (shell) on the right
-              }
-              // Components near their parent apps
-              const parentApp = d.id.split("-")[0];
-              return parentApp === "header" ? width * 0.15 : width * 0.45;
-            })
-            .strength(1) // Stronger x-force for clearer layers
+          d3.forceX(width / 2).strength(0.05) // Reduced from 0.1 to allow more spread
         )
         .force(
           "y",
-          d3
-            .forceY<GraphNode>()
-            .y((d) => {
-              if (d.type === "host") {
-                return height * 0.5; // Center shell vertically
-              }
-              if (d.type === "remote") {
-                // Spread remotes vertically
-                return d.name === "header" ? height * 0.3 : height * 0.7;
-              }
-              // Position components near their parent apps
-              const parentApp = d.id.split("-")[0];
-              return parentApp === "header" ? height * 0.3 : height * 0.7;
-            })
-            .strength(0.8)
+          d3.forceY(height / 2).strength(0.05) // Reduced from 0.1 to allow more spread
         )
-        .force("collision", d3.forceCollide().radius(80)); // Prevent node overlap
+        .force(
+          "collision",
+          d3
+            .forceCollide()
+            .radius((d) => {
+              if (d.type === "host") return 100; // Increased from 70
+              if (d.type === "remote") return 80; // Increased from 60
+              return 60; // Increased from 50
+            })
+            .strength(0.8) // Increased from 0.5 for stronger collision avoidance
+        );
 
-      // Create arrow markers with correct direction
+      // Create arrow markers
       const defs = svg.append("defs");
 
-      // Arrow markers for different connection types
-      ["host-remote", "remote-remote", "component", "remote-component"].forEach(
-        (type) => {
-          defs
-            .append("marker")
-            .attr("id", type)
-            .attr("viewBox", "0 -5 10 10")
-            .attr("refX", type.includes("component") ? 30 : 35)
-            .attr("refY", 0)
-            .attr("markerWidth", 8)
-            .attr("markerHeight", 8)
-            .attr("orient", "auto")
-            .append("path")
-            .attr("d", "M0,-6L12,0L0,6")
-            .attr("fill", type.includes("host") ? "#4CAF50" : "#2c3e50");
-        }
-      );
+      // Define arrow markers
+      ["host-remote", "remote-remote", "component"].forEach((type) => {
+        defs
+          .append("marker")
+          .attr("id", type)
+          .attr("viewBox", "0 -5 10 10")
+          .attr("refX", type === "component" ? 42 : 52)
+          .attr("refY", 0)
+          .attr("markerWidth", 6)
+          .attr("markerHeight", 6)
+          .attr("orient", "auto")
+          .append("path")
+          .attr("d", "M0,-5L10,0L0,5")
+          .attr("fill", type === "host-remote" ? "#4CAF50" : "#2c3e50");
+      });
 
-      // Create links with clear direction
+      // Create links with arrows
       const link = svg
         .append("g")
         .selectAll("path")
@@ -226,11 +212,10 @@ export default defineComponent({
           }
         })
         .attr("stroke-width", (d) => {
-          if (d.type === "host-remote") return 4;
-          if (d.type === "remote-remote") return 3;
-          return 2;
+          if (d.type === "host-remote") return 2;
+          if (d.type === "remote-remote") return 1.5;
+          return 1;
         })
-        .attr("stroke-opacity", 1)
         .attr("fill", "none")
         .attr("marker-end", (d) => `url(#${d.type})`);
 
@@ -260,40 +245,75 @@ export default defineComponent({
           }
         })
         .style("stroke", "#ffffff")
-        .style("stroke-width", 4);
+        .style("stroke-width", 2);
 
-      // Add labels with larger fonts
+      // Add name labels inside nodes
       node
         .append("text")
-        .attr("dy", (d) => (d.type === "host" ? -65 : -55))
+        .attr("dy", -5)
         .attr("text-anchor", "middle")
-        .attr("fill", "#2c3e50")
+        .attr("fill", "#ffffff")
         .style("font-size", (d) => {
-          if (d.type === "host") return "24px";
-          if (d.type === "remote") return "20px";
-          return "18px";
+          if (d.type === "host") return "16px";
+          if (d.type === "remote") return "14px";
+          return "12px";
         })
-        .style("font-weight", "600")
+        .style("font-weight", "500")
         .style("font-family", "system-ui, -apple-system, sans-serif")
+        .style("pointer-events", "none")
         .text((d) => d.name);
 
-      // Add port labels with larger fonts
+      // Add port labels inside nodes
       node
         .append("text")
-        .attr("dy", (d) => (d.type === "host" ? 75 : 65))
+        .attr("dy", 15)
         .attr("text-anchor", "middle")
-        .attr("fill", "#666666")
-        .style("font-size", "16px")
+        .attr("fill", "#ffffff")
+        .style("font-size", (d) => {
+          if (d.type === "host") return "12px";
+          return "11px";
+        })
         .style("font-family", "system-ui, -apple-system, sans-serif")
+        .style("font-weight", "400")
+        .style("opacity", "0.9")
+        .style("pointer-events", "none")
         .text((d) => `Port: ${d.port}`);
 
-      // Update positions with curved paths showing direction
+      // Update path generation
       simulation.on("tick", () => {
+        // Contain nodes within bounds
+        graphData.value.nodes.forEach((d) => {
+          d.x = Math.max(padding, Math.min(width - padding, d.x));
+          d.y = Math.max(padding, Math.min(height - padding, d.y));
+        });
+
+        // Update link paths
         link.attr("d", (d) => {
-          const dx = d.target.x - d.source.x;
-          const dy = d.target.y - d.source.y;
-          const dr = Math.sqrt(dx * dx + dy * dy) * 1.2;
-          return `M${d.source.x},${d.source.y}A${dr},${dr} 0 0,1 ${d.target.x},${d.target.y}`;
+          const source = d.source;
+          const target = d.target;
+
+          // Calculate node radius
+          const sourceRadius =
+            source.type === "host" ? 60 : source.type === "remote" ? 50 : 40;
+          const targetRadius =
+            target.type === "host" ? 60 : target.type === "remote" ? 50 : 40;
+
+          // Calculate the total distance
+          const dx = target.x - source.x;
+          const dy = target.y - source.y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+
+          // Calculate the unit vector
+          const unitX = dx / distance;
+          const unitY = dy / distance;
+
+          // Calculate start and end points
+          const startX = source.x + unitX * sourceRadius;
+          const startY = source.y + unitY * sourceRadius;
+          const endX = target.x - unitX * (targetRadius + 5); // Reduced gap to 5px
+          const endY = target.y - unitY * (targetRadius + 5);
+
+          return `M${startX},${startY}L${endX},${endY}`;
         });
 
         node.attr("transform", (d) => `translate(${d.x},${d.y})`);
@@ -336,7 +356,7 @@ export default defineComponent({
           shell: {
             port: "3000",
             appType: "host",
-            remotes: ["header", "body"],
+            remotes: ["header", "body", "tile1"],
             exposedComponents: {},
             url: "http://localhost:3000",
           },
@@ -354,6 +374,18 @@ export default defineComponent({
           },
           body: {
             port: "3002",
+            appType: "remote",
+            remotes: ["header"],
+            exposedComponents: {
+              Body: {
+                source: "./src/components/Body.vue",
+                remoteComponentValue: "body/Body",
+              },
+            },
+            url: "http://localhost:3002",
+          },
+          tile1: {
+            port: "3003",
             appType: "remote",
             remotes: ["header"],
             exposedComponents: {
