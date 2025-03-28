@@ -1,6 +1,42 @@
 <template>
   <div class="app">
     <h1>{{ projectName }}</h1>
+    <div class="legend">
+      <h3>Legend</h3>
+      <div class="legend-section">
+        <h4>Node Types</h4>
+        <div class="legend-item">
+          <div class="legend-circle host"></div>
+          <span>Host App - Main container application</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-circle remote"></div>
+          <span>Remote App - Micro-frontend application</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-circle component"></div>
+          <span>Component - Exposed component from an app</span>
+        </div>
+      </div>
+      <div class="legend-section">
+        <h4>Connection Types</h4>
+        <div class="legend-item">
+          <div class="legend-line host-remote"></div>
+          <span>Host-Remote - Host app importing remote app</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-line remote-remote"></div>
+          <span>Remote-Remote - Remote app depending on another remote</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-line component"></div>
+          <span>Component - Component exposed by an app</span>
+        </div>
+      </div>
+      <div class="legend-info">
+        <p>💡 Tip: Drag nodes to rearrange the graph</p>
+      </div>
+    </div>
     <div ref="graphContainer" class="graph-container"></div>
   </div>
 </template>
@@ -399,60 +435,60 @@ export default defineComponent({
     };
 
     onMounted(async () => {
-      // config.value = {
-      //   project: "myapp",
-      //   webapp: "vue3",
-      //   bundler: "webpack",
-      //   apps: {
-      //     shell: {
-      //       port: "3000",
-      //       appType: "host",
-      //       remotes: ["header", "body", "tile1"],
-      //       exposedComponents: {},
-      //       url: "http://localhost:3000",
-      //     },
-      //     header: {
-      //       port: "3001",
-      //       appType: "remote",
-      //       remotes: [],
-      //       exposedComponents: {
-      //         TestMyAPP: {
-      //           source: "./src/components/TestMyAPP.vue",
-      //           remoteComponentValue: "header/TestMyAPP",
-      //         },
-      //       },
-      //       url: "http://localhost:3001",
-      //     },
-      //     body: {
-      //       port: "3002",
-      //       appType: "remote",
-      //       remotes: ["header"],
-      //       exposedComponents: {
-      //         Body: {
-      //           source: "./src/components/Body.vue",
-      //           remoteComponentValue: "body/Body",
-      //         },
-      //       },
-      //       url: "http://localhost:3002",
-      //     },
-      //     tile1: {
-      //       port: "3003",
-      //       appType: "remote",
-      //       remotes: ["header"],
-      //       exposedComponents: {
-      //         Body: {
-      //           source: "./src/components/Body.vue",
-      //           remoteComponentValue: "body/Body",
-      //         },
-      //       },
-      //       url: "http://localhost:3002",
-      //     },
-      //   },
-      // };
+      config.value = {
+        project: "myapp",
+        webapp: "vue3",
+        bundler: "webpack",
+        apps: {
+          shell: {
+            port: "3000",
+            appType: "host",
+            remotes: ["header", "body", "tile1"],
+            exposedComponents: {},
+            url: "http://localhost:3000",
+          },
+          header: {
+            port: "3001",
+            appType: "remote",
+            remotes: [],
+            exposedComponents: {
+              TestMyAPP: {
+                source: "./src/components/TestMyAPP.vue",
+                remoteComponentValue: "header/TestMyAPP",
+              },
+            },
+            url: "http://localhost:3001",
+          },
+          body: {
+            port: "3002",
+            appType: "remote",
+            remotes: ["header"],
+            exposedComponents: {
+              Body: {
+                source: "./src/components/Body.vue",
+                remoteComponentValue: "body/Body",
+              },
+            },
+            url: "http://localhost:3002",
+          },
+          tile1: {
+            port: "3003",
+            appType: "remote",
+            remotes: ["header"],
+            exposedComponents: {
+              Body: {
+                source: "./src/components/Body.vue",
+                remoteComponentValue: "body/Body",
+              },
+            },
+            url: "http://localhost:3002",
+          },
+        },
+      };
 
-      // projectName.value = config.value.project;
+      projectName.value = config.value.project;
 
-      await fetchConfig();
+      // await fetchConfig();
 
       // Initialize graph after a short delay to ensure container is ready
 
@@ -516,5 +552,96 @@ svg {
   display: block;
   width: 100%;
   height: 100%;
+}
+
+.legend {
+  background-color: rgba(255, 255, 255, 0.95);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 16px 24px;
+  position: absolute;
+  top: 100px;
+  right: 24px;
+  max-width: 320px;
+  z-index: 1000;
+}
+
+.legend h3 {
+  color: #2c3e50;
+  margin: 0 0 16px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.legend h4 {
+  color: #2c3e50;
+  margin: 16px 0 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.legend-section {
+  margin-bottom: 16px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  margin: 8px 0;
+  font-size: 13px;
+  color: #2c3e50;
+}
+
+.legend-circle {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  margin-right: 12px;
+  border: 2px solid #ffffff;
+}
+
+.legend-circle.host {
+  background-color: #4caf50;
+}
+
+.legend-circle.remote {
+  background-color: #2c3e50;
+}
+
+.legend-circle.component {
+  background-color: #757575;
+}
+
+.legend-line {
+  width: 24px;
+  height: 2px;
+  margin-right: 12px;
+}
+
+.legend-line.host-remote {
+  background-color: #4caf50;
+  height: 2px;
+}
+
+.legend-line.remote-remote {
+  background-color: #2c3e50;
+  height: 1.5px;
+}
+
+.legend-line.component {
+  background-color: #757575;
+  height: 1px;
+}
+
+.legend-info {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #eee;
+}
+
+.legend-info p {
+  margin: 8px 0;
+  font-size: 13px;
+  color: #666;
 }
 </style>
