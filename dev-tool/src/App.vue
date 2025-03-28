@@ -68,7 +68,7 @@ export default defineComponent({
 <style scoped>
 .app {
   padding: 20px;
-  max-width: 800px;
+
   margin: 0 auto;
 }
 

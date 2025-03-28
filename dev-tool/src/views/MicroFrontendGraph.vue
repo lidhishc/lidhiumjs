@@ -1,23 +1,13 @@
 <template>
   <div class="app">
     <h1>{{ projectName }}</h1>
-    <div v-if="config" class="graph-container" ref="graphContainer"></div>
+    <div ref="graphContainer" class="graph-container"></div>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref, onMounted, computed, onUnmounted } from "vue";
-import {
-  select,
-  forceSimulation,
-  forceLink,
-  forceManyBody,
-  forceCenter,
-  drag,
-  Selection,
-  Simulation,
-  SimulationNodeDatum,
-} from "d3";
+import * as d3 from "d3";
 
 interface LidhiumConfig {
   project: string;
@@ -34,12 +24,11 @@ interface LidhiumConfig {
   };
 }
 
-interface GraphNode {
+interface GraphNode extends d3.SimulationNodeDatum {
   id: string;
   name: string;
   type: string;
   port: string;
-  components?: string[];
   layer: number;
 }
 
@@ -47,7 +36,6 @@ interface GraphLink {
   source: string;
   target: string;
   type: string;
-  components?: string[];
 }
 
 export default defineComponent({
@@ -56,18 +44,21 @@ export default defineComponent({
     const config = ref<LidhiumConfig | null>(null);
     const projectName = ref("");
     const graphContainer = ref<HTMLElement | null>(null);
-    let svg: Selection<SVGSVGElement, unknown, null, undefined> | null = null;
-    let simulation: Simulation<SimulationNodeDatum, undefined> | null = null;
+    let svg: any = null;
+    let simulation: any = null;
 
     const graphData = computed(() => {
-      if (!config.value) return { nodes: [], links: [] };
+      if (!config.value) {
+        console.log("No config available");
+        return { nodes: [], links: [] };
+      }
 
       const nodes: GraphNode[] = [];
       const links: GraphLink[] = [];
+      const apps = config.value.apps;
 
-      // Create nodes for each app and their components
-      Object.entries(config.value.apps).forEach(([name, app]) => {
-        // Add main app node
+      // First create all app nodes
+      Object.entries(apps).forEach(([name, app]) => {
         nodes.push({
           id: name,
           name,
@@ -75,300 +66,268 @@ export default defineComponent({
           port: app.port,
           layer: app.appType === "host" ? 0 : 1,
         });
+      });
 
-        // Add component nodes
-        Object.entries(app.exposedComponents).forEach(
-          ([componentName, component]) => {
+      // Then create component nodes and their relationships
+      Object.entries(apps).forEach(([name, app]) => {
+        // Add exposed components
+        Object.entries(app.exposedComponents || {}).forEach(
+          ([componentName, details]) => {
+            const componentId = `${name}-${componentName}`;
             nodes.push({
-              id: `${name}-${componentName}`,
+              id: componentId,
               name: componentName,
               type: "component",
               port: app.port,
               layer: 2,
             });
 
-            // Link component to its app
+            // Link component to its provider app
             links.push({
               source: name,
-              target: `${name}-${componentName}`,
+              target: componentId,
               type: "component",
             });
           }
         );
 
-        // Create links for remotes
+        // Add app-to-app relationships (direction from provider to consumer)
         app.remotes.forEach((remote) => {
-          // Host to Remote connection
           if (app.appType === "host") {
+            // For host relationships, reverse direction to show remotes being imported into host
             links.push({
-              source: name,
-              target: remote,
+              source: remote, // The remote app (provider)
+              target: name, // The host app (consumer)
               type: "host-remote",
             });
           } else {
-            // Remote to Remote connection
+            // For remote-remote relationships
             links.push({
-              source: name,
-              target: remote,
+              source: remote, // The app providing components
+              target: name, // The app consuming components
               type: "remote-remote",
             });
           }
         });
       });
 
+      console.log("Generated graph data:", { nodes, links });
       return { nodes, links };
     });
 
-    // const fetchConfig = async () => {
-    //   try {
-    //     const response = await fetch("/api/lidhium-config");
-    //     const data = await response.json();
-    //     config.value = data;
-    //     projectName.value = data.project;
-    //   } catch (error) {
-    //     console.error("Failed to fetch lidhium config:", error);
-    //   }
-    // };
-
     const createGraph = () => {
-      if (!graphContainer.value || !graphData.value) {
-        console.error("Graph container or data not available");
-        return;
-      }
-
-      console.log("Creating graph with data:", graphData.value);
+      if (!graphContainer.value || !graphData.value.nodes.length) return;
 
       // Clear previous graph
-      select(graphContainer.value).selectAll("*").remove();
+      d3.select(graphContainer.value).selectAll("*").remove();
 
-      // Create SVG with explicit dimensions
-      const width = Math.max(graphContainer.value.clientWidth, 800);
-      const height = Math.max(graphContainer.value.clientHeight, 600);
-      console.log("Container dimensions:", { width, height });
+      // Use full window dimensions
+      const width = window.innerWidth;
+      const height = window.innerHeight - 60; // Account for header
 
-      svg = select(graphContainer.value)
+      // Create SVG with full dimensions
+      svg = d3
+        .select(graphContainer.value)
         .append("svg")
-        .attr("width", width)
-        .attr("height", height)
+        .attr("width", "100%")
+        .attr("height", "100%")
+        .attr("viewBox", [0, 0, width, height])
         .style("background-color", "#ffffff");
 
-      // Create arrow markers for different types of links
-      svg
-        .append("defs")
-        .selectAll("marker")
-        .data(["host-remote", "remote-remote", "component"])
-        .enter()
-        .append("marker")
-        .attr("id", (d: string) => d)
-        .attr("viewBox", "0 -5 10 10")
-        .attr("refX", 20)
-        .attr("refY", 0)
-        .attr("markerWidth", 6)
-        .attr("markerHeight", 6)
-        .attr("orient", "auto")
-        .append("path")
-        .attr("d", "M0,-5L10,0L0,5")
-        .attr("fill", (d: string) => {
-          switch (d) {
-            case "host-remote":
-              return "#42b983"; // Green for host-remote
-            case "remote-remote":
-              return "#2c3e50"; // Dark blue for remote-remote
-            case "component":
-              return "#666"; // Gray for component
-            default:
-              return "#999";
-          }
-        });
-
-      // Create simulation with adjusted forces
-      simulation = forceSimulation(
-        graphData.value.nodes as SimulationNodeDatum[]
-      )
+      // Adjust simulation forces for better organization
+      simulation = d3
+        .forceSimulation<GraphNode>(graphData.value.nodes)
         .force(
           "link",
-          forceLink(graphData.value.links)
-            .id((d: any) => d.id)
-            .distance(150)
+          d3
+            .forceLink<GraphNode, GraphLink>(graphData.value.links)
+            .id((d) => d.id)
+            .distance((d) => {
+              // Increase distances for better spacing
+              if (d.type === "host-remote") return width * 0.25;
+              if (d.type === "remote-remote") return width * 0.25;
+              return width * 0.15; // Component links
+            })
         )
-        .force("charge", forceManyBody().strength(-1000))
-        .force("center", forceCenter(width / 2, height / 2))
-        .force("x", (d: any) => {
-          // Position nodes based on their layer horizontally
-          const targetX =
-            d.layer === 0
-              ? width * 0.2 // Host on left
-              : d.layer === 1
-              ? width * 0.5 // Remotes in middle
-              : width * 0.8; // Components on right
-          return (targetX - d.x) * 0.1; // Smooth movement to target
-        })
-        .force("y", (d: any) => {
-          // Keep nodes vertically centered
-          return (height / 2 - d.y) * 0.1;
-        });
+        .force("charge", d3.forceManyBody().strength(-2000))
+        .force(
+          "x",
+          d3
+            .forceX<GraphNode>()
+            .x((d) => {
+              // Create clear horizontal layers
+              if (d.type === "remote") {
+                return width * 0.3; // Remote apps on the left
+              }
+              if (d.type === "host") {
+                return width * 0.7; // Host (shell) on the right
+              }
+              // Components near their parent apps
+              const parentApp = d.id.split("-")[0];
+              return parentApp === "header" ? width * 0.15 : width * 0.45;
+            })
+            .strength(1) // Stronger x-force for clearer layers
+        )
+        .force(
+          "y",
+          d3
+            .forceY<GraphNode>()
+            .y((d) => {
+              if (d.type === "host") {
+                return height * 0.5; // Center shell vertically
+              }
+              if (d.type === "remote") {
+                // Spread remotes vertically
+                return d.name === "header" ? height * 0.3 : height * 0.7;
+              }
+              // Position components near their parent apps
+              const parentApp = d.id.split("-")[0];
+              return parentApp === "header" ? height * 0.3 : height * 0.7;
+            })
+            .strength(0.8)
+        )
+        .force("collision", d3.forceCollide().radius(80)); // Prevent node overlap
 
-      // Create links with curved paths
+      // Create arrow markers with correct direction
+      const defs = svg.append("defs");
+
+      // Arrow markers for different connection types
+      ["host-remote", "remote-remote", "component", "remote-component"].forEach(
+        (type) => {
+          defs
+            .append("marker")
+            .attr("id", type)
+            .attr("viewBox", "0 -5 10 10")
+            .attr("refX", type.includes("component") ? 30 : 35)
+            .attr("refY", 0)
+            .attr("markerWidth", 8)
+            .attr("markerHeight", 8)
+            .attr("orient", "auto")
+            .append("path")
+            .attr("d", "M0,-6L12,0L0,6")
+            .attr("fill", type.includes("host") ? "#4CAF50" : "#2c3e50");
+        }
+      );
+
+      // Create links with clear direction
       const link = svg
         .append("g")
         .selectAll("path")
         .data(graphData.value.links)
-        .enter()
-        .append("path")
+        .join("path")
+        .attr("stroke", (d) => {
+          switch (d.type) {
+            case "host-remote":
+              return "#4CAF50";
+            case "remote-remote":
+              return "#2c3e50";
+            default:
+              return "#757575";
+          }
+        })
+        .attr("stroke-width", (d) => {
+          if (d.type === "host-remote") return 4;
+          if (d.type === "remote-remote") return 3;
+          return 2;
+        })
+        .attr("stroke-opacity", 1)
         .attr("fill", "none")
-        .attr("stroke", (d: GraphLink) => {
-          switch (d.type) {
-            case "host-remote":
-              return "#42b983"; // Green for host-remote
-            case "remote-remote":
-              return "#2c3e50"; // Dark blue for remote-remote
-            case "component":
-              return "#666"; // Gray for component
-            default:
-              return "#999";
-          }
-        })
-        .attr("stroke-width", (d: GraphLink) => {
-          switch (d.type) {
-            case "host-remote":
-              return 3;
-            case "remote-remote":
-              return 2;
-            case "component":
-              return 1;
-            default:
-              return 1;
-          }
-        })
-        .attr("stroke-dasharray", (d: GraphLink) => {
-          switch (d.type) {
-            case "host-remote":
-              return "none";
-            case "remote-remote":
-              return "5,5";
-            case "component":
-              return "2,4";
-            default:
-              return "none";
-          }
-        })
-        .attr("marker-end", (d: GraphLink) => `url(#${d.type})`);
+        .attr("marker-end", (d) => `url(#${d.type})`);
 
-      // Create nodes
+      // Create nodes with larger sizes
       const node = svg
         .append("g")
         .selectAll("g")
         .data(graphData.value.nodes)
-        .enter()
-        .append("g")
-        .call(
-          drag<SVGGElement, GraphNode>()
-            .on("start", dragstarted)
-            .on("drag", dragged)
-            .on("end", dragended)
-        );
+        .join("g");
 
-      // Add circles to nodes
+      // Add node circles with increased sizes
       node
         .append("circle")
-        .attr("r", (d: GraphNode) => {
-          if (d.type === "host") return 40;
-          if (d.type === "remote") return 35;
-          return 25;
+        .attr("r", (d) => {
+          if (d.type === "host") return 60;
+          if (d.type === "remote") return 50;
+          return 40;
         })
-        .attr("fill", (d: GraphNode) => {
-          if (d.type === "host") return "#42b983";
-          if (d.type === "remote") return "#2c3e50";
-          return "#666";
-        });
+        .style("fill", (d) => {
+          switch (d.type) {
+            case "host":
+              return "#4CAF50";
+            case "remote":
+              return "#2c3e50";
+            default:
+              return "#757575";
+          }
+        })
+        .style("stroke", "#ffffff")
+        .style("stroke-width", 4);
 
-      // Add labels to nodes
+      // Add labels with larger fonts
       node
         .append("text")
-        .attr("dy", -45)
+        .attr("dy", (d) => (d.type === "host" ? -65 : -55))
         .attr("text-anchor", "middle")
         .attr("fill", "#2c3e50")
-        .style("font-size", (d: GraphNode) => {
-          if (d.type === "host") return "16px";
-          if (d.type === "remote") return "14px";
-          return "12px";
+        .style("font-size", (d) => {
+          if (d.type === "host") return "24px";
+          if (d.type === "remote") return "20px";
+          return "18px";
         })
-        .text((d: GraphNode) => d.name);
+        .style("font-weight", "600")
+        .style("font-family", "system-ui, -apple-system, sans-serif")
+        .text((d) => d.name);
 
-      // Add port labels to nodes
+      // Add port labels with larger fonts
       node
         .append("text")
-        .attr("dy", 45)
+        .attr("dy", (d) => (d.type === "host" ? 75 : 65))
         .attr("text-anchor", "middle")
-        .attr("fill", "#666")
-        .style("font-size", "10px")
-        .text((d: GraphNode) => (d.port ? `Port: ${d.port}` : ""));
+        .attr("fill", "#666666")
+        .style("font-size", "16px")
+        .style("font-family", "system-ui, -apple-system, sans-serif")
+        .text((d) => `Port: ${d.port}`);
 
-      // Update positions on each tick
+      // Update positions with curved paths showing direction
       simulation.on("tick", () => {
-        // Update link paths
-        link.attr("d", (d: any) => {
+        link.attr("d", (d) => {
           const dx = d.target.x - d.source.x;
           const dy = d.target.y - d.source.y;
-          const dr = Math.sqrt(dx * dx + dy * dy);
+          const dr = Math.sqrt(dx * dx + dy * dy) * 1.2;
           return `M${d.source.x},${d.source.y}A${dr},${dr} 0 0,1 ${d.target.x},${d.target.y}`;
         });
 
-        // Update node positions
-        node.attr("transform", (d: any) => `translate(${d.x},${d.y})`);
+        node.attr("transform", (d) => `translate(${d.x},${d.y})`);
       });
 
-      // Add layer labels
-      svg
-        .append("text")
-        .attr("x", width * 0.2)
-        .attr("y", 30)
-        .attr("text-anchor", "middle")
-        .attr("fill", "#2c3e50")
-        .style("font-size", "14px")
-        .text("Host");
+      // Add drag behavior
+      node.call(
+        d3
+          .drag<any, GraphNode>()
+          .on("start", (event, d) => {
+            if (!event.active) simulation.alphaTarget(0.3).restart();
+            d.fx = d.x;
+            d.fy = d.y;
+          })
+          .on("drag", (event, d) => {
+            d.fx = event.x;
+            d.fy = event.y;
+          })
+          .on("end", (event, d) => {
+            if (!event.active) simulation.alphaTarget(0);
+            d.fx = null;
+            d.fy = null;
+          })
+      );
 
-      svg
-        .append("text")
-        .attr("x", width * 0.5)
-        .attr("y", 30)
-        .attr("text-anchor", "middle")
-        .attr("fill", "#2c3e50")
-        .style("font-size", "14px")
-        .text("Remotes");
-
-      svg
-        .append("text")
-        .attr("x", width * 0.8)
-        .attr("y", 30)
-        .attr("text-anchor", "middle")
-        .attr("fill", "#2c3e50")
-        .style("font-size", "14px")
-        .text("Components");
-
-      console.log("Graph creation completed");
+      console.log("Graph initialization complete");
     };
 
-    // Drag functions
-    function dragstarted(event: any) {
-      if (!event.active) simulation?.alphaTarget(0.3).restart();
-      event.subject.fx = event.subject.x;
-      event.subject.fy = event.subject.y;
-    }
-
-    function dragged(event: any) {
-      event.subject.fx = event.x;
-      event.subject.fy = event.y;
-    }
-
-    function dragended(event: any) {
-      if (!event.active) simulation?.alphaTarget(0);
-      event.subject.fx = null;
-      event.subject.fy = null;
-    }
+    // Add window resize handler
+    const handleResize = () => {
+      createGraph();
+    };
 
     onMounted(() => {
-      // fetchConfig();
       config.value = {
         project: "myapp",
         webapp: "vue3",
@@ -393,7 +352,6 @@ export default defineComponent({
             },
             url: "http://localhost:3001",
           },
-
           body: {
             port: "3002",
             appType: "remote",
@@ -408,30 +366,30 @@ export default defineComponent({
           },
         },
       };
+
       projectName.value = config.value.project;
       console.log("Config loaded:", config.value);
-      console.log("Graph data:", graphData.value);
 
-      // Add a small delay to ensure the container is rendered
+      // Initialize graph after a short delay to ensure container is ready
       setTimeout(() => {
         if (graphContainer.value) {
-          console.log("Container found, dimensions:", {
-            width: graphContainer.value.clientWidth,
-            height: graphContainer.value.clientHeight,
-          });
           createGraph();
         } else {
-          console.error("Graph container not found");
+          console.error("Graph container not found after delay");
         }
       }, 100);
+
+      window.addEventListener("resize", handleResize);
     });
 
     onUnmounted(() => {
-      simulation?.stop();
+      if (simulation) {
+        simulation.stop();
+      }
+      window.removeEventListener("resize", handleResize);
     });
 
     return {
-      config,
       projectName,
       graphContainer,
     };
@@ -441,22 +399,38 @@ export default defineComponent({
 
 <style scoped>
 .app {
-  padding: 20px;
-  max-width: 1200px;
-  margin: 0 auto;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
 }
 
 h1 {
   color: #2c3e50;
-  margin-bottom: 20px;
+  margin: 20px 0;
+  text-align: center;
+  font-size: 48px;
+  font-weight: bold;
 }
 
 .graph-container {
+  flex: 1;
   width: 100%;
-  height: 600px;
-  border: 1px solid #eee;
-  border-radius: 8px;
-  overflow: hidden;
+  border: none;
   background-color: #ffffff;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+svg {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 </style>
