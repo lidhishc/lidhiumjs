@@ -7,7 +7,10 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc && cpx 'src/static/**/{.*,*}' dist/static"
   },
-  "author": "Lidhish C",
+  "author": {
+    "name": "Lidhish C",
+    "url": "https://github.com/lidhishc"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",
