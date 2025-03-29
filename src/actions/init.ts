@@ -41,7 +41,7 @@ export default () => async (appName: string) => {
   // ]);
 
   console.log(selectedApp, selectedBundle);
-  console.log(chalk.green(`Creating a ${appName}`));
+  console.log(chalk.green(`Creating ${appName}`));
   createFolder(`./${appName}`);
   createFolder(`./${appName}/apps`);
   createFile(
@@ -169,4 +169,16 @@ export default () => async (appName: string) => {
     )
   );
   copyFolder(`../static/config_files`, `./${appName}`);
+
+  console.log(
+    chalk.green(
+      `Created ${chalk.yellow(appName)} with ${chalk.yellow(
+        selectedApp
+      )} and ${chalk.yellow(selectedBundle)} successfully`
+    )
+  );
+
+  console.log(chalk.green(`Run ${chalk.magenta(`cd ${appName}`)}`));
+
+  console.log(chalk.green(`Run ${chalk.magenta(`yarn install`)}`));
 };
