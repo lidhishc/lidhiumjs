@@ -5,7 +5,7 @@
 [![Downloads](https://img.shields.io/npm/dm/lidhium.svg)](https://www.npmjs.com/package/lidhium)
 [![GitHub issues](https://img.shields.io/github/issues/lidhishc/lidhium)](https://github.com/lidhishc/lidhium/issues)
 
-A powerful CLI tool for creating and managing micro-frontend applications with Webpack.
+A powerful CLI tool for creating and managing micro-frontend applications.
 
 ## Features
 
@@ -13,6 +13,8 @@ A powerful CLI tool for creating and managing micro-frontend applications with W
 - 🛠 Supports Vue3
 - 📦 Built-in Webpack configuration
 - 🔄 Seamless module federation
+- 📈 Scalable architecture for growing applications
+- ⚙️ Single configuration file for all apps
 
 ## Installation
 
@@ -28,22 +30,30 @@ npm install -g lidhium
 lidhium init my-app
 ```
 
-### Generate a new micro-frontend
+### Generate a new micro-frontend app
 
 ```bash
 lidhium generate app-name 3000
 ```
 
-### Start development server
+> **Note:** The first app you generate will always be of type `host`.
+
+### Start Micro App
 
 ```bash
-lidhium start app-name
+yarn start app-name
 ```
 
 ### Build for production
 
 ```bash
-lidhium build app-name
+yarn build app-name
+```
+
+### Start Dev-Tool
+
+```bash
+yarn dev-tool
 ```
 
 ## Commands
@@ -54,8 +64,11 @@ lidhium build app-name
 | `generate` | Generate a new micro-frontend app |
 | `start`    | Start development server          |
 | `build`    | Build for production              |
-| `expose`   | Expose components for federation  |
-| `bind`     | Bind federated components         |
+| `expose`   | Expose components from the app    |
+| `bind`     | Bind other micro-frontend app     |
+| `dev-tool` | Start dev-tool                    |
+
+> **Note:** The `expose` and `bind` commands should be run inside the micro-frontend app folder.
 
 ## Support
 
@@ -76,7 +89,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Author
 
-Lidhish C
+[Lidhish C](https://github.com/lidhishc)
 
 ## Links
 
