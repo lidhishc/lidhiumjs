@@ -43,14 +43,19 @@ export default () => async (appName: string) => {
   console.log(selectedApp, selectedBundle);
   console.log(chalk.green(`Creating a ${appName}`));
   createFolder(`./${appName}`);
+  createFolder(`./${appName}/apps`);
   createFile(
     `./${appName}/lidhium.config.json`,
-    JSON.stringify({
-      project: appName,
-      webapp: selectedApp.toLowerCase(),
-      bundler: selectedBundle,
-      apps: {},
-    })
+    JSON.stringify(
+      {
+        project: appName,
+        webapp: selectedApp.toLowerCase(),
+        bundler: selectedBundle,
+        apps: {},
+      },
+      null,
+      2
+    )
   );
   createFile(
     `./${appName}/package.json`,

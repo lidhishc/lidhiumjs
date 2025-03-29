@@ -5,59 +5,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted } from "vue";
+import { defineComponent } from "vue";
 import MicroFrontendGraph from "./views/MicroFrontendGraph.vue";
-interface LidhiumConfig {
-  project: string;
-  webapp: string;
-  bundler: string;
-  apps: {
-    [key: string]: {
-      port: string;
-      appType: string;
-      remotes: string[];
-      exposedComponents: Record<string, any>;
-      url: string;
-    };
-  };
-}
 
 export default defineComponent({
   name: "App",
   setup() {
-    const config = ref<LidhiumConfig | null>(null);
-    const projectName = ref("");
-    const error = ref("");
-
-    const fetchConfig = async () => {
-      try {
-        console.log("Fetching config from:", "/api/lidhium-config");
-        const response = await fetch("/api/lidhium-config");
-        console.log("Response status:", response.status);
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        console.log("Received config:", data);
-
-        config.value = data;
-        projectName.value = data.project;
-      } catch (error) {
-        console.error("Failed to fetch lidhium config:", error);
-      }
-    };
-
-    // onMounted(() => {
-    //   fetchConfig();
-    // });
-
-    return {
-      config,
-      projectName,
-      error,
-    };
+    return {};
   },
   components: {
     MicroFrontendGraph,
