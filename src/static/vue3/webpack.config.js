@@ -28,9 +28,11 @@ module.exports = {
   },
   // Resolve extensions and aliases
   resolve: {
-    extensions: [".ts", ".js", ".vue"],
+    extensions: [".ts", ".js", ".vue", ".json"],
     alias: {
       "@": path.resolve(__dirname, "src"),
+      "@apps": path.resolve(__dirname, "../../apps"),
+      "@root": path.resolve(__dirname, "../../"),
     },
   },
   // Module rules for different file types
@@ -54,7 +56,18 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        use: ["style-loader", "css-loader"],
+        use: [
+          "style-loader",
+          "css-loader",
+          {
+            loader: "postcss-loader",
+            options: {
+              postcssOptions: {
+                plugins: ["tailwindcss", "autoprefixer"],
+              },
+            },
+          },
+        ],
       },
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,

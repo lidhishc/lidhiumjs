@@ -44,6 +44,7 @@ export default () => async (appName: string) => {
   console.log(chalk.green(`Creating ${appName}`));
   createFolder(`./${appName}`);
   createFolder(`./${appName}/apps`);
+  createFolder(`./${appName}/global`);
   createFile(
     `./${appName}/lidhium.config.json`,
     JSON.stringify(
@@ -73,9 +74,11 @@ export default () => async (appName: string) => {
           "eslint-config-prettier": "10.0.1",
           fs: "^0.0.1-security",
           "node-polyfill-webpack-plugin": "^4.1.0",
+          postcss: "^8.4.35",
           prettier: "^3.4.2",
           "regenerator-runtime": "0.14.1",
           "register-service-worker": "^1.7.2",
+          tailwindcss: "^3.4.1",
           vue: "3",
           "vue-class-component": "^8.0.0-0",
           "vue-router": "^4.5.0",
@@ -108,6 +111,7 @@ export default () => async (appName: string) => {
           "@vue/vue3-jest": "^29.2.6",
           ajv: "^8.17.1",
           "ajv-keywords": "^5.1.0",
+          autoprefixer: "^10.4.17",
           "babel-jest": "^29.7.0",
           "babel-loader": "^9.2.1",
           "css-loader": "^7.1.2",
@@ -169,7 +173,7 @@ export default () => async (appName: string) => {
     )
   );
   copyFolder(`../static/config_files`, `./${appName}`);
-
+  copyFolder(`../static/global`, `./${appName}/global`);
   console.log(
     chalk.green(
       `Created ${chalk.yellow(appName)} with ${chalk.yellow(
