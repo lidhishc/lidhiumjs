@@ -1,7 +1,7 @@
 # Lidhium JS
 
 [![npm version](https://img.shields.io/npm/v/lidhium.svg)](https://www.npmjs.com/package/lidhium)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: GPL-3.0](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Downloads](https://img.shields.io/npm/dm/lidhium.svg)](https://www.npmjs.com/package/lidhium)
 [![GitHub issues](https://img.shields.io/github/issues/lidhishc/lidhium)](https://github.com/lidhishc/lidhium/issues)
 
