@@ -1,0 +1,22 @@
+<svg width="45" height="45" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Modern Architecture Blocks -->
+  <path d="M10 35h25M10 25h25M10 15h25" 
+        stroke="url(#gradient)" 
+        stroke-width="2" 
+        stroke-linecap="round"/>
+  
+  <!-- Connection Lines -->
+  <path d="M15 12v26M23 12v26M30 12v26" 
+        stroke="url(#gradient)" 
+        stroke-width="2" 
+        stroke-linecap="round"
+        stroke-dasharray="2 2"/>
+  
+  <!-- Gradient Definition -->
+  <defs>
+    <linearGradient id="gradient" x1="0" y1="0" x2="45" y2="45" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#f97316"/>
+      <stop offset="100%" stop-color="#ef4444"/>
+    </linearGradient>
+  </defs>
+</svg> 

@@ -8,12 +8,18 @@ export default function Hero({ theme }: HeroProps) {
   return (
     <div
       className={`text-center py-16 border-b ${
-        theme === "dark" ? "bg-gray-900 text-gray-100" : "bg-gray-50 text-gray-900"
+        theme === "dark"
+          ? "bg-gray-900 text-gray-100"
+          : "bg-gray-50 text-gray-900"
       }`}
     >
       <h1 className="text-5xl font-bold">Lidhium JS</h1>
-      <p className={`mt-4 text-lg ${theme === "dark" ? "text-gray-300" : "text-gray-600"}`}>
-        ⚡ A powerful CLI tool for micro-frontend development with Webpack
+      <p
+        className={`mt-4 text-lg ${
+          theme === "dark" ? "text-gray-300" : "text-gray-600"
+        }`}
+      >
+        ⚡ A powerful CLI tool for micro-frontend development
       </p>
 
       <Link href="docs/getting-started">

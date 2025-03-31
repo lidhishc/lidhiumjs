@@ -1,0 +1,43 @@
+<svg width="45" height="45" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Main Central Repo -->
+  <rect x="15" y="17" width="15" height="11" rx="2" 
+        stroke="url(#gradient)" 
+        stroke-width="2"
+        fill="none"/>
+  
+  <!-- Connected Repos -->
+  <rect x="5" y="7" width="12" height="8" rx="2" 
+        stroke="url(#gradient)" 
+        stroke-width="2"
+        fill="none"/>
+        
+  <rect x="28" y="7" width="12" height="8" rx="2" 
+        stroke="url(#gradient)" 
+        stroke-width="2"
+        fill="none"/>
+        
+  <rect x="5" y="30" width="12" height="8" rx="2" 
+        stroke="url(#gradient)" 
+        stroke-width="2"
+        fill="none"/>
+        
+  <rect x="28" y="30" width="12" height="8" rx="2" 
+        stroke="url(#gradient)" 
+        stroke-width="2"
+        fill="none"/>
+  
+  <!-- Connection Lines -->
+  <path d="M11 15v15M34 15v15M22.5 17v-5M22.5 28v7" 
+        stroke="url(#gradient)" 
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-dasharray="2 2"/>
+  
+  <!-- Gradient Definition -->
+  <defs>
+    <linearGradient id="gradient" x1="0" y1="0" x2="45" y2="45" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#f97316"/>
+      <stop offset="100%" stop-color="#ef4444"/>
+    </linearGradient>
+  </defs>
+</svg> 

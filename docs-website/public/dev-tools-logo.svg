@@ -1,0 +1,39 @@
+<svg width="45" height="45" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Code Window -->
+  <rect x="5" y="5" width="35" height="35" rx="3" 
+        stroke="url(#gradient)" 
+        stroke-width="2"
+        fill="none"/>
+  
+  <!-- Window Controls -->
+  <circle cx="11" cy="11" r="2" fill="url(#gradient)"/>
+  <circle cx="18" cy="11" r="2" fill="url(#gradient)"/>
+  <circle cx="25" cy="11" r="2" fill="url(#gradient)"/>
+  
+  <!-- Code Lines -->
+  <path d="M10 22l5 5l-5 5" 
+        stroke="url(#gradient)" 
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"/>
+  
+  <path d="M35 22l-5 5l5 5" 
+        stroke="url(#gradient)" 
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"/>
+  
+  <!-- Console Line -->
+  <path d="M20 32h10" 
+        stroke="url(#gradient)" 
+        stroke-width="2"
+        stroke-linecap="round"/>
+  
+  <!-- Gradient Definition -->
+  <defs>
+    <linearGradient id="gradient" x1="0" y1="0" x2="45" y2="45" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#f97316"/>
+      <stop offset="100%" stop-color="#ef4444"/>
+    </linearGradient>
+  </defs>
+</svg> 

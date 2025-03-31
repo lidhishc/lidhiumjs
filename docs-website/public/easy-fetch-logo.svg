@@ -1,0 +1,23 @@
+<svg width="45" height="45" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle -->
+  <circle cx="22.5" cy="22.5" r="21" stroke="url(#gradient)" stroke-width="2"/>
+  
+  <!-- Arrow Design -->
+  <path d="M15 22.5L30 22.5M30 22.5L25 17.5M30 22.5L25 27.5" 
+        stroke="url(#gradient)" 
+        stroke-width="2" 
+        stroke-linecap="round" 
+        stroke-linejoin="round"/>
+  
+  <!-- Data Points -->
+  <circle cx="15" cy="22.5" r="2" fill="url(#gradient)"/>
+  <circle cx="30" cy="22.5" r="2" fill="url(#gradient)"/>
+  
+  <!-- Gradient Definition -->
+  <defs>
+    <linearGradient id="gradient" x1="0" y1="0" x2="45" y2="45" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#f97316"/>
+      <stop offset="100%" stop-color="#ef4444"/>
+    </linearGradient>
+  </defs>
+</svg> 
