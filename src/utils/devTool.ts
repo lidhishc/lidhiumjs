@@ -62,9 +62,6 @@ export function createDevServer(configFile: any, port: number = 3000) {
   app.listen(port, () => {
     console.log(`Server running on port ${port}`);
     console.log(`Access your app at http://localhost:${port}`);
-    console.log(
-      `API endpoint available at http://localhost:${port}/api/lidhium-config`
-    );
   });
 
   return app;
