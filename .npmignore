@@ -22,3 +22,6 @@ dev-tool/webpack.config.js
 dev-tool/index.html
 dev-tool/README.md
 dev-tool/yarn.lock
+
+# Ignore docs-website files except dist
+docs-website
