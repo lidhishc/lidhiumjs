@@ -37,7 +37,6 @@ export function createDevServer(configFile: any, port: number = 3000) {
 
   // Get the absolute path to the dist directory
   const distPath = path.join(__dirname, "../../dev-tool/dist");
-  console.log("Serving static files from:", distPath);
 
   // Serve static files from the build directory
   app.use(express.static(distPath));
