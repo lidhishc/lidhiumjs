@@ -139,18 +139,6 @@ export default function About() {
                   </span>
                   Jest for testing
                 </li>
-                <li className="flex items-center">
-                  <span className="text-orange-600 dark:text-orange-400 mr-2">
-                    ▹
-                  </span>
-                  Vite for development
-                </li>
-                <li className="flex items-center">
-                  <span className="text-orange-600 dark:text-orange-400 mr-2">
-                    ▹
-                  </span>
-                  GitHub Actions CI/CD
-                </li>
               </ul>
             </div>
           </div>

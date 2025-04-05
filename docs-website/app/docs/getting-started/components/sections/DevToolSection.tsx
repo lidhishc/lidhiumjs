@@ -6,7 +6,7 @@ export default function DevToolSection() {
   return (
     <section id="dev-tool" className="h-full">
       <div className="mb-12">
-        <h1 className="text-4xl font-bold mb-4">Development Tool</h1>
+        <h1 className="text-3xl font-bold mb-4">Development Tool</h1>
         <div className="text-lg text-gray-600 dark:text-gray-300 mb-4">
           Enhance your micro-frontend development experience with built-in tools
         </div>

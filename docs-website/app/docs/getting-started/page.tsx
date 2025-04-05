@@ -14,8 +14,8 @@ import { useTheme } from "../../context/ThemeContext";
 
 const sections = [
   { id: "installation", title: "Installation" },
-  { id: "generate-micro-frontend", title: "Generate a new micro-frontend" },
-  { id: "expose-the-remote-app", title: "Expose the remote application" },
+  { id: "generate-micro-frontend", title: "Create new micro-app" },
+  { id: "expose-the-remote-app", title: "Expose Components" },
   { id: "bind-the-host-app", title: "Bind Micro-app" },
   { id: "run-applications", title: "Run applications" },
   { id: "commands", title: "Commands" },

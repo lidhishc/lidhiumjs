@@ -7,7 +7,7 @@ export default function RunApplicationsSection() {
     <section id="run-applications" className="h-full">
       <div className="space-y-6">
         <div>
-          <h2 className="text-2xl font-bold mb-4">Running Applications</h2>
+          <h2 className="text-3xl font-bold mb-4">Running Applications</h2>
           <p className="text-gray-600 dark:text-gray-300 mb-4">
             To run your micro-frontend applications, you need to start both the
             remote and main applications. The remote application should be

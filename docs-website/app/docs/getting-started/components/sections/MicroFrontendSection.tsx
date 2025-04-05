@@ -16,7 +16,7 @@ export default function MicroFrontendSection() {
   return (
     <section id="generate-micro-frontend" className="h-full">
       <div className="mb-8">
-        <h2 className="text-3xl font-bold mb-4">Generating a Micro-App</h2>
+        <h2 className="text-3xl font-bold mb-4">Create new micro-app</h2>
         <p className="text-lg text-gray-600 dark:text-gray-300">
           Create independent micro-frontend applications that can be federated
           together
