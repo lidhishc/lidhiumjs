@@ -77,12 +77,6 @@ export default function Navbar() {
               href="/docs/getting-started"
               className="text-sm hover:opacity-80"
             >
-              Getting Started
-            </Link>
-            <Link
-              href="/docs/api-reference"
-              className="text-sm hover:opacity-80"
-            >
               Documentation
             </Link>
             <Link href="/docs/examples" className="text-sm hover:opacity-80">
@@ -166,13 +160,6 @@ export default function Navbar() {
           <div className="py-2 space-y-1">
             <Link
               href="/docs/getting-started"
-              className="block hover:opacity-80 py-2 text-sm"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Getting Started
-            </Link>
-            <Link
-              href="/docs/api-reference"
               className="block hover:opacity-80 py-2 text-sm"
               onClick={() => setIsMenuOpen(false)}
             >

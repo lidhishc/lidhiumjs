@@ -14,5 +14,8 @@ export default function addGlobalCommand(command: Command) {
   command.command("build <appName>").action(buildActions());
   command.command("expose <componentPath>").action(exposeActions());
   command.command("bind").action(bindActions());
-  command.command("dev-tool").action(devToolActions());
+  command
+    .command("dev-tool")
+    .option("-p, --port <port>", "Port number")
+    .action(devToolActions());
 }

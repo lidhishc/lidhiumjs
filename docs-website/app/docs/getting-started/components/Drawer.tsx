@@ -17,7 +17,7 @@ export default function Drawer({
 
   return (
     <aside
-      className={`w-45% px-20 py-4 border-r shadow-sm ${
+      className={`w-[300px] min-w-[300px] h-[calc(100vh-64px)] sticky top-[64px] px-6 py-4 border-r shadow-sm ${
         theme === "dark"
           ? "bg-[#15202b] border-gray-700"
           : "bg-white border-gray-300"
@@ -30,10 +30,11 @@ export default function Drawer({
       >
         Overview
       </h2>
-      <ul>
+      <ul className="space-y-1">
         {sections.map((section) => (
           <li key={section.id}>
             <button
+              data-section-id={section.id}
               className={`w-full text-left px-3 py-2 rounded-md text-sm font-medium transition ${
                 activeSection === section.id
                   ? theme === "dark"
