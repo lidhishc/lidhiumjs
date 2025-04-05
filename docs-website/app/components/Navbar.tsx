@@ -52,7 +52,7 @@ export default function Navbar() {
         theme === "dark" ? "border-gray-800" : "border-gray-200"
       }`}
     >
-      <div className="max-w-[2000px] mx-auto px-6">
+      <div className="mx-auto px-6">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link href="/" className="flex-shrink-0">

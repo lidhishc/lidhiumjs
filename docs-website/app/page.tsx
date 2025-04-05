@@ -4,6 +4,7 @@ import Features from "./components/Featues";
 import Hero from "./components/Hero";
 import TechStack from "./components/TechStack";
 import { useTheme } from "./context/ThemeContext";
+
 export default function Home() {
   const { theme } = useTheme();
   return (

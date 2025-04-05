@@ -24,8 +24,8 @@ export default function Hero({ theme }: HeroProps) {
 
       <Link href="docs/getting-started">
         <button
-          className="mt-6 px-6 py-3 font-semibold rounded-lg shadow transition
-          bg-orange-500 text-white hover:bg-pink-600"
+          className="mt-6 px-6 py-3 font-semibold rounded-lg shadow transition 
+          bg-orange-500 text-white hover:bg-pink-600 hover:cursor-pointer"
         >
           Get Started →
         </button>

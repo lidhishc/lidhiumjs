@@ -23,7 +23,7 @@ export default function FeatureTile({
     >
       <h3 className="text-lg font-semibold mb-2">{title}</h3>
       <Image src={image} alt={title} width={75} height={75} className="mb-4" />
-      <p className="text-center text-sm font-light mb-1">{description}</p>
+      <p className="text-center text-sm font-light mb-1 p-2">{description}</p>
     </div>
   );
 }
