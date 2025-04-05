@@ -37,6 +37,7 @@
         <p>💡 Tip: Drag nodes to rearrange the graph</p>
       </div>
     </div>
+    <div class="tooltip"></div>
     <div ref="graphContainer" class="graph-container"></div>
   </div>
 </template>
@@ -93,13 +94,44 @@ export default defineComponent({
 
     const fetchConfig = async () => {
       try {
-        const response = await fetch("/api/lidhium-config");
+        // const response = await fetch("/api/lidhium-config");
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
+        // if (!response.ok) {
+        //   throw new Error(`HTTP error! status: ${response.status}`);
+        // }
 
-        const data = await response.json();
+        const data = {
+          project: "my-app",
+          webapp: "vue3",
+          bundler: "webpack",
+          apps: {
+            shell: {
+              port: "3000",
+              appType: "host",
+              remotes: ["remote"],
+              exposedComponents: {},
+              url: "http://localhost:3000",
+            },
+            remote: {
+              port: "3001",
+              appType: "remote",
+              remotes: [],
+              exposedComponents: {
+                RemoteComponent: {
+                  source: "./src/components/RemoteComponent.vue",
+                  remoteComponentValue: "remote/RemoteComponent",
+                },
+                RemoteComponent2: {
+                  source: "./src/components/RemoteComponent2.vue",
+                  remoteComponentValue: "remote/RemoteComponent2",
+                },
+              },
+              url: "http://localhost:3001",
+            },
+          },
+        };
+
+        //await response.json();
 
         config.value = data;
         projectName.value = data.project;
@@ -222,9 +254,9 @@ export default defineComponent({
           d3
             .forceCollide<GraphNode>()
             .radius((d: GraphNode) => {
-              if (d.type === "host") return 100;
-              if (d.type === "remote") return 80;
-              return 60;
+              if (d.type === "host") return 110;
+              if (d.type === "remote") return 90;
+              return 70;
             })
             .strength(0.8)
         );
@@ -277,15 +309,90 @@ export default defineComponent({
         .append("g")
         .selectAll("g")
         .data(graphData.value.nodes)
-        .join("g");
+        .join("g")
+        .on("mouseover", (event: MouseEvent, d: GraphNode) => {
+          const app = config.value?.apps[d.id.split("-")[0]];
+          const tooltip = d3.select(".tooltip");
+          let tooltipContent = "";
+
+          if (d.type === "component") {
+            // For components, show only name, remoteComponentValue, and app name
+            const [appName, componentName] = d.id.split("-");
+            const componentDetails = app?.exposedComponents[componentName];
+            tooltipContent = `
+              <div class="tooltip-header">
+                <strong>${d.name}</strong>
+              </div>
+              <div class="tooltip-body">
+                <div class="tooltip-row">
+                  <span class="label">App:</span>
+                  <span class="value">${appName}</span>
+                </div>
+                <div class="tooltip-row">
+                  <span class="label">Remote Value:</span>
+                  <span class="value">${
+                    componentDetails?.remoteComponentValue || "N/A"
+                  }</span>
+                </div>
+              </div>
+            `;
+          } else {
+            // For apps (both host and remote)
+            const connectedComponents = Object.keys(
+              app?.exposedComponents || {}
+            ).length;
+            const connectedApps = app?.remotes?.length || 0;
+
+            tooltipContent = `
+              <div class="tooltip-header">
+                <strong>${d.name}</strong>
+              </div>
+              <div class="tooltip-body">
+                <div class="tooltip-row">
+                  <span class="label">Type:</span>
+                  <span class="value">${d.type}</span>
+                </div>
+                <div class="tooltip-row">
+                  <span class="label">URL:</span>
+                  <span class="value">${app?.url}</span>
+                </div>
+                <div class="tooltip-row">
+                  <span class="label">Connected Apps:</span>
+                  <span class="value">${connectedApps}</span>
+                </div>
+                <div class="tooltip-row">
+                  <span class="label">Exposed Components:</span>
+                  <span class="value">${connectedComponents}</span>
+                </div>
+              </div>
+            `;
+          }
+
+          tooltip
+            .style("display", "block")
+            .style("opacity", 1)
+            .html(tooltipContent)
+            .style("left", event.pageX + 10 + "px")
+            .style("top", event.pageY - 10 + "px");
+        })
+        .on("mousemove", (event: MouseEvent) => {
+          const tooltip = d3.select(".tooltip");
+          tooltip
+            .style("left", event.pageX + 10 + "px")
+            .style("top", event.pageY - 10 + "px");
+        })
+        .on("mouseout", () => {
+          const tooltip = d3.select(".tooltip");
+          tooltip.style("opacity", 0).style("display", "none");
+        });
 
       // Add node circles
       node
         .append("circle")
         .attr("r", (d: GraphNode) => {
-          if (d.type === "host") return 60;
-          if (d.type === "remote") return 50;
-          return 40;
+          if (d.type === "host") return 70;
+          if (d.type === "remote") return 60;
+          return 50;
         })
         .style("fill", (d: GraphNode) => {
           switch (d.type) {
@@ -298,38 +405,43 @@ export default defineComponent({
           }
         })
         .style("stroke", "#ffffff")
-        .style("stroke-width", 2);
+        .style("stroke-width", 2)
+        .style("opacity", 0.9);
 
       // Add name labels inside nodes
       node
         .append("text")
-        .attr("dy", -5)
+        .attr("dy", -8)
         .attr("text-anchor", "middle")
         .attr("fill", "#ffffff")
         .style("font-size", (d: GraphNode) => {
-          if (d.type === "host") return "16px";
-          if (d.type === "remote") return "14px";
-          return "12px";
+          const nameLength = d.name.length;
+          if (d.type === "host") return nameLength > 10 ? "14px" : "18px";
+          if (d.type === "remote") return nameLength > 10 ? "12px" : "16px";
+          return nameLength > 10 ? "11px" : "14px";
         })
-        .style("font-weight", "500")
+        .style("font-weight", "600")
         .style("font-family", "system-ui, -apple-system, sans-serif")
         .style("pointer-events", "none")
+        .style("text-shadow", "0 1px 2px rgba(0,0,0,0.2)")
         .text((d: GraphNode) => d.name);
 
       // Add port labels inside nodes
       node
         .append("text")
-        .attr("dy", 15)
+        .attr("dy", 12)
         .attr("text-anchor", "middle")
         .attr("fill", "#ffffff")
         .style("font-size", (d: GraphNode) => {
-          if (d.type === "host") return "12px";
-          return "11px";
+          if (d.type === "host") return "14px";
+          if (d.type === "remote") return "13px";
+          return "12px";
         })
         .style("font-family", "system-ui, -apple-system, sans-serif")
-        .style("font-weight", "400")
+        .style("font-weight", "500")
         .style("opacity", "0.9")
         .style("pointer-events", "none")
+        .style("text-shadow", "0 1px 2px rgba(0,0,0,0.2)")
         .text((d: GraphNode) => `Port: ${d.port}`);
 
       // Update path generation
@@ -347,11 +459,11 @@ export default defineComponent({
           const source = d.source as GraphNode;
           const target = d.target as GraphNode;
 
-          // Calculate node radius
+          // Calculate node radius with new sizes
           const sourceRadius =
-            source.type === "host" ? 60 : source.type === "remote" ? 50 : 40;
+            source.type === "host" ? 70 : source.type === "remote" ? 60 : 50;
           const targetRadius =
-            target.type === "host" ? 60 : target.type === "remote" ? 50 : 40;
+            target.type === "host" ? 70 : target.type === "remote" ? 60 : 50;
           // Calculate the total distance
           const dx =
             ((target as GraphNode & { x?: number }).x || 0) -
@@ -586,5 +698,76 @@ svg {
   margin: 8px 0;
   font-size: 13px;
   color: #666;
+}
+
+.tooltip {
+  position: fixed;
+  display: none;
+  background-color: rgba(255, 255, 255, 0.98);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  padding: 0;
+  font-size: 14px;
+  min-width: 280px;
+  max-width: 320px;
+  z-index: 1000;
+  pointer-events: none;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.tooltip-header {
+  background-color: #f8f9fa;
+  padding: 12px 16px;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.tooltip-header strong {
+  color: #2c3e50;
+  font-size: 18px;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.tooltip-body {
+  padding: 16px;
+  background-color: #ffffff;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+.tooltip-row {
+  display: flex;
+  margin: 8px 0;
+  padding: 4px 0;
+  align-items: flex-start;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.tooltip-row:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.tooltip-row .label {
+  color: #666;
+  font-weight: 500;
+  width: 140px;
+  flex-shrink: 0;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.tooltip-row .value {
+  color: #2c3e50;
+  font-weight: 500;
+  flex-grow: 1;
+  word-break: break-word;
+  font-size: 14px;
+  padding-left: 8px;
 }
 </style>
