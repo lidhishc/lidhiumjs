@@ -17,6 +17,10 @@
           <div class="legend-circle component"></div>
           <span>Component - Exposed component from an app</span>
         </div>
+        <div class="legend-item">
+          <div class="legend-circle inactive"></div>
+          <span>Inactive App - Application not running</span>
+        </div>
       </div>
       <div class="legend-section">
         <h4>Connection Types</h4>
@@ -68,6 +72,7 @@ interface GraphNode extends d3.SimulationNodeDatum {
   type: string;
   port: string;
   layer: number;
+  isActive?: boolean;
   x?: number;
   y?: number;
   fx?: number | null;
@@ -205,6 +210,64 @@ export default defineComponent({
       });
       return { nodes, links };
     });
+
+    const checkAppStatus = async (url: string): Promise<boolean> => {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 2000);
+
+        const response = await fetch(url, {
+          mode: "no-cors",
+          method: "HEAD",
+          signal: controller.signal,
+        });
+
+        clearTimeout(timeoutId);
+        return true;
+      } catch (error) {
+        return false;
+      }
+    };
+
+    const updateAppStatuses = async () => {
+      if (!config.value || !graphData.value.nodes) return;
+
+      for (const node of graphData.value.nodes) {
+        if (node.type !== "component") {
+          const app = config.value.apps[node.id];
+          if (app?.url) {
+            node.isActive = await checkAppStatus(app.url);
+          }
+        }
+      }
+      // Trigger re-render of nodes
+      if (svg) {
+        updateNodeStyles();
+      }
+    };
+
+    const updateNodeStyles = () => {
+      if (!svg) return;
+
+      svg
+        .selectAll("circle")
+        .attr("class", (d: GraphNode) => {
+          return !d.isActive && d.type !== "component" ? "inactive" : "";
+        })
+        .style("fill", (d: GraphNode) => {
+          if (!d.isActive && d.type !== "component") {
+            return "#ff4444";
+          }
+          switch (d.type) {
+            case "host":
+              return "#4CAF50";
+            case "remote":
+              return "#2c3e50";
+            default:
+              return "#757575";
+          }
+        });
+    };
 
     const createGraph = () => {
       if (!graphContainer.value || !graphData.value.nodes.length) return;
@@ -349,6 +412,14 @@ export default defineComponent({
               </div>
               <div class="tooltip-body">
                 <div class="tooltip-row">
+                  <span class="label">Status:</span>
+                  <span class="value">
+                    <span class="status-indicator ${
+                      d.isActive ? "active" : "inactive"
+                    }">${d.isActive ? "Active" : "Inactive"}</span>
+                  </span>
+                </div>
+                <div class="tooltip-row">
                   <span class="label">Type:</span>
                   <span class="value">${d.type}</span>
                 </div>
@@ -394,7 +465,13 @@ export default defineComponent({
           if (d.type === "remote") return 60;
           return 50;
         })
+        .attr("class", (d: GraphNode) => {
+          return !d.isActive && d.type !== "component" ? "inactive" : "";
+        })
         .style("fill", (d: GraphNode) => {
+          if (!d.isActive && d.type !== "component") {
+            return "#ff4444";
+          }
           switch (d.type) {
             case "host":
               return "#4CAF50";
@@ -545,11 +622,12 @@ export default defineComponent({
     onMounted(async () => {
       await fetchConfig();
 
-      // Initialize graph after a short delay to ensure container is ready
-
-      setTimeout(() => {
+      setTimeout(async () => {
         if (graphContainer.value) {
+          await updateAppStatuses(); // Check app statuses before creating graph
           createGraph();
+          // Set up periodic status checks
+          setInterval(updateAppStatuses, 30000); // Check every 30 seconds
         } else {
           console.error("Graph container not found after delay");
         }
@@ -572,6 +650,30 @@ export default defineComponent({
   },
 });
 </script>
+
+<style>
+@keyframes blink {
+  0% {
+    opacity: 0.9;
+  }
+  50% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 0.9;
+  }
+}
+
+circle.inactive {
+  animation: blink 1s ease-in-out infinite !important;
+}
+
+/* Add this for legend inactive circle */
+.legend-circle.inactive {
+  background-color: #ff4444;
+  animation: blink 1s ease-in-out infinite;
+}
+</style>
 
 <style scoped>
 .app {
@@ -769,5 +871,24 @@ svg {
   word-break: break-word;
   font-size: 14px;
   padding-left: 8px;
+}
+
+.status-indicator {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+.status-indicator.active {
+  background-color: #4caf50;
+  color: white;
+}
+
+.status-indicator.inactive {
+  background-color: #ff4444;
+  color: white;
 }
 </style>
