@@ -99,44 +99,13 @@ export default defineComponent({
 
     const fetchConfig = async () => {
       try {
-        // const response = await fetch("/api/lidhium-config");
+        const response = await fetch("/api/lidhium-config");
 
-        // if (!response.ok) {
-        //   throw new Error(`HTTP error! status: ${response.status}`);
-        // }
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
-        const data = {
-          project: "my-app",
-          webapp: "vue3",
-          bundler: "webpack",
-          apps: {
-            shell: {
-              port: "3000",
-              appType: "host",
-              remotes: ["remote"],
-              exposedComponents: {},
-              url: "http://localhost:3000",
-            },
-            remote: {
-              port: "3001",
-              appType: "remote",
-              remotes: [],
-              exposedComponents: {
-                RemoteComponent: {
-                  source: "./src/components/RemoteComponent.vue",
-                  remoteComponentValue: "remote/RemoteComponent",
-                },
-                RemoteComponent2: {
-                  source: "./src/components/RemoteComponent2.vue",
-                  remoteComponentValue: "remote/RemoteComponent2",
-                },
-              },
-              url: "http://localhost:3001",
-            },
-          },
-        };
-
-        //await response.json();
+        const data = await response.json();
 
         config.value = data;
         projectName.value = data.project;
