@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 
 import BindSection from "./components/sections/BindSection";
 import CommandsSection from "./components/sections/CommandsSection";
+import DevToolSection from "./components/sections/DevToolSection";
 import Drawer from "./components/Drawer";
 import ExposeSection from "./components/sections/ExposeSection";
 import InstallationSection from "./components/sections/InstallationSection";
@@ -18,6 +19,7 @@ const sections = [
   { id: "bind-the-host-app", title: "Bind Micro-app" },
   { id: "run-applications", title: "Run applications" },
   { id: "commands", title: "Commands" },
+  { id: "dev-tool", title: "Development Tool" },
 ];
 
 export default function GettingStarted() {
@@ -52,6 +54,7 @@ export default function GettingStarted() {
         {activeSection === "bind-the-host-app" && <BindSection />}
         {activeSection === "run-applications" && <RunApplicationsSection />}
         {activeSection === "commands" && <CommandsSection />}
+        {activeSection === "dev-tool" && <DevToolSection />}
       </main>
     </div>
   );
