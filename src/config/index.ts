@@ -1,5 +1,5 @@
 export const config = {
   docs: {
-    webUrl: "http://localhost:3000",
+    webUrl: "https://lidhiumjs.com",
   },
 };

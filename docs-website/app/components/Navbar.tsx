@@ -89,7 +89,7 @@ export default function Navbar() {
             <GitHubButton />
 
             {/* Theme Toggle Button */}
-            <button
+            {/* <button
               onClick={toggleTheme}
               className={`p-2 rounded-lg transition-colors border ${
                 theme === "dark"
@@ -101,7 +101,7 @@ export default function Navbar() {
               <div className="w-5 h-5 flex items-center justify-center">
                 {theme === "light" ? "🌙" : "☀️"}
               </div>
-            </button>
+            </button> */}
           </div>
 
           <div className="flex md:hidden items-center space-x-4">
