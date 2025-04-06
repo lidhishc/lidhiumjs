@@ -183,7 +183,10 @@ export default function CommandsSection() {
         </div>
 
         {/* Build Command */}
-        <div className="bg-gray-50 dark:bg-gray-800/50 p-6 rounded-xl">
+        <div
+          id="build-app"
+          className="bg-gray-50 dark:bg-gray-800/50 p-6 rounded-xl"
+        >
           <h3 className="text-xl font-semibold mb-4">Production Build</h3>
           <div className="space-y-4">
             <div>

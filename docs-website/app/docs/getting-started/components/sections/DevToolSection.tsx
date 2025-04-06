@@ -14,7 +14,10 @@ export default function DevToolSection() {
 
       <div className="space-y-8">
         {/* Running Dev Tool */}
-        <div className="bg-gray-50 dark:bg-gray-800/50 p-6 rounded-xl">
+        <div
+          id="running-dev-tool"
+          className="bg-gray-50 dark:bg-gray-800/50 p-6 rounded-xl"
+        >
           <h3 className="text-xl font-semibold mb-4">Running the Dev Tool</h3>
           <p className="mb-4">
             Launch the development tool using either yarn or npm:
@@ -36,7 +39,10 @@ export default function DevToolSection() {
         </div>
 
         {/* Visualization Tool */}
-        <div className="bg-gray-50 dark:bg-gray-800/50 p-6 rounded-xl">
+        <div
+          id="visualization-tool"
+          className="bg-gray-50 dark:bg-gray-800/50 p-6 rounded-xl"
+        >
           <h3 className="text-xl font-semibold mb-4">
             Architecture Visualization
           </h3>
@@ -45,7 +51,10 @@ export default function DevToolSection() {
             understand and manage your micro-frontend architecture:
           </p>
           <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div
+              id="node-types"
+              className="grid grid-cols-1 md:grid-cols-2 gap-6"
+            >
               <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                 <h4 className="font-semibold mb-2">Node Types</h4>
                 <ul className="space-y-3">
@@ -120,7 +129,10 @@ export default function DevToolSection() {
                 </ul>
               </div>
             </div>
-            <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+            <div
+              id="features"
+              className="p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg"
+            >
               <h4 className="font-semibold mb-2">Features</h4>
               <ul className="space-y-2">
                 <li>• Interactive graph visualization</li>
@@ -133,7 +145,10 @@ export default function DevToolSection() {
             </div>
 
             {/* Hover Information */}
-            <div className="p-4 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg">
+            <div
+              id="hover-details"
+              className="p-4 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg"
+            >
               <h4 className="font-semibold mb-2">Hover Details</h4>
               <p className="text-sm mb-4">
                 Hover over any app node to see detailed information about the
@@ -169,7 +184,10 @@ export default function DevToolSection() {
               </p>
             </div>
 
-            <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+            <div
+              id="example-structure"
+              className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg"
+            >
               <h4 className="font-semibold mb-2">Example Structure</h4>
               <p className="text-sm mb-4">
                 A typical visualization might show:

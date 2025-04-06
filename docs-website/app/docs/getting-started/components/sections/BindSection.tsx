@@ -4,7 +4,7 @@ import CodeBlock from "../CodeBlock";
 
 export default function BindSection() {
   return (
-    <section id="bind-the-host-app" className="h-full">
+    <section id="bind-micro-app" className="h-full">
       <div className="mb-8">
         <h2 className="text-3xl font-bold mb-4">Bind Applications</h2>
         <p className="text-lg text-gray-600 dark:text-gray-300">
@@ -91,12 +91,8 @@ export default function BindSection() {
               </h4>
               <div className="space-y-2">
                 <div>
-                  <p className="text-sm mb-1">For host app:</p>
+                  <p className="text-sm mb-1">For app:</p>
                   <CodeBlock code="cd apps/shell" />
-                </div>
-                <div>
-                  <p className="text-sm mb-1">For remote app:</p>
-                  <CodeBlock code="cd apps/remote-app-1" />
                 </div>
               </div>
               <p className="text-sm text-gray-600 dark:text-gray-400 mt-3">
