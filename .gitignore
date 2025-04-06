@@ -28,3 +28,13 @@ node_modules
 *.sw?
 
 testapp
+
+# Firebase
+.firebase/
+firebase-debug.log
+.firebaserc
+firebase.json
+firebase-config.js
+serviceAccountKey.json
+.firebase-config.js
+.env.firebase

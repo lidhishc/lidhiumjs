@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 
-import Image from "next/image";
 import Link from "next/link";
+import Logo from "./Logo";
 import { useTheme } from "../context/ThemeContext";
 
 export default function Navbar() {
@@ -55,20 +55,11 @@ export default function Navbar() {
       <div className="mx-auto px-6">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link href="/" className="flex-shrink-0">
-            <div className="flex items-center">
-              <Image
-                src="/logov2.png"
-                alt="Easy Fetch Logo"
-                width={35}
-                height={35}
-                priority
-                className="invert-0 dark:invert"
-              />
-              <h1 className="text-xl font-bold ml-2 bg-gradient-to-r from-orange-500 to-red-500 text-transparent bg-clip-text">
-                Lidhium JS
-              </h1>
-            </div>
+          <Link href="/" className="flex items-center gap-2">
+            <Logo width={35} height={35} />
+            <span className="text-xl font-bold text-gray-800 dark:text-white">
+              Lidhium JS
+            </span>
           </Link>
 
           {/* Desktop Menu */}

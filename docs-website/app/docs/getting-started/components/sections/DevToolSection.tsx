@@ -1,6 +1,7 @@
 "use client";
 
 import CodeBlock from "../CodeBlock";
+import Image from "next/image";
 
 export default function DevToolSection() {
   return (
@@ -196,9 +197,11 @@ export default function DevToolSection() {
               {/* Example Visualization Image */}
               <div className="mb-6 p-4 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
                 <div className="max-w-[600px] mx-auto">
-                  <img
+                  <Image
                     src="/dev-tool-example.png"
                     alt="Development Tool Visualization Example"
+                    width={600}
+                    height={400}
                     className="w-full rounded-lg border border-gray-200 dark:border-gray-700"
                   />
                   <p className="text-sm mt-2 text-gray-600 dark:text-gray-300">
