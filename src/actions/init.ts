@@ -1,6 +1,7 @@
 import { copyFolder, createFile, createFolder } from "../file-manager";
 
 import chalk from "chalk";
+import { config } from "../config";
 import fs from "fs";
 import inquirer from "inquirer";
 import { printLibraryHeader } from "../utils/common";
@@ -184,5 +185,13 @@ export default () => async (appName: string) => {
 
   console.log(chalk.green(`Run ${chalk.magenta(`cd ${appName}`)}`));
 
-  console.log(chalk.green(`Run ${chalk.magenta(`yarn install`)}`));
+  console.log(chalk.green(`Run ${chalk.magenta(`install dependencies`)}`));
+
+  console.log(
+    chalk.green(
+      `For more details visit ${chalk.magenta(
+        `${config.docs.webUrl}/docs/getting-started`
+      )}`
+    )
+  );
 };

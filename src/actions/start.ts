@@ -1,5 +1,8 @@
-import { execSync } from "child_process";
 import { getConfigFile, printLibraryHeader } from "../utils/common";
+
+import chalk from "chalk";
+import { config } from "../config";
+import { execSync } from "child_process";
 
 export default () => async (appName: string) => {
   printLibraryHeader();
@@ -12,6 +15,13 @@ export default () => async (appName: string) => {
 
   if (!configFile.apps[appName]) {
     console.error(`App ${appName} not exists`);
+    console.log(
+      chalk.green(
+        `For more details visit ${chalk.magenta(
+          `${config.docs.webUrl}/docs/getting-started#commands`
+        )}`
+      )
+    );
     return;
   }
 

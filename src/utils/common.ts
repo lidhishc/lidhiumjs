@@ -1,8 +1,8 @@
 import chalk from "chalk";
+import { config } from "../config";
 import flinget from "figlet";
 import fs from "fs";
 import path from "path";
-
 export const printLibraryHeader = () => {
   console.log(
     chalk.yellow(
@@ -76,11 +76,25 @@ export const updateExposedComponents = ({
   const configJsonPath = `./../../lidhium.config.json`;
   const currentConfig = getConfigFile(configJsonPath, true);
   if (!currentConfig) {
-    console.log(chalk.red("Please run this command in the app directory"));
+    console.log(chalk.red("Please run this command from the app directory"));
+    console.log(
+      chalk.green(
+        `For more details visit ${chalk.magenta(
+          `${config.docs.webUrl}/docs/getting-started#expose-the-remote-app`
+        )}`
+      )
+    );
     return;
   }
   if (!currentConfig.apps[appName]) {
     console.error(`App ${appName} not exists`);
+    console.log(
+      chalk.green(
+        `For more details visit ${chalk.magenta(
+          `${config.docs.webUrl}/docs/getting-started#expose-the-remote-app`
+        )}`
+      )
+    );
     return;
   }
   const exposedComponents = currentConfig.apps[appName].exposedComponents;
@@ -93,7 +107,6 @@ export const updateExposedComponents = ({
 
 export function getAppName() {
   const currentDir = process.cwd(); // Gets full path
-  console.log("Current directory:", currentDir);
   const folderName = path.basename(currentDir); // Extracts folder name
   return folderName;
 }
