@@ -13,19 +13,19 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (localStorage.getItem("theme") === "dark") {
       setTheme("dark");
-      document.documentElement.classList.add("dark");
+      // document.documentElement.classList.add("dark");
     }
   }, []);
 
   const toggleTheme = () => {
     if (theme === "light") {
       setTheme("dark");
-      document.documentElement.classList.add("dark");
-      localStorage.setItem("theme", "dark");
+      // document.documentElement.classList.add("dark");
+      // localStorage.setItem("theme", "dark");
     } else {
       setTheme("light");
-      document.documentElement.classList.remove("dark");
-      localStorage.setItem("theme", "light");
+      // document.documentElement.classList.remove("dark");
+      // localStorage.setItem("theme", "light");
     }
   };
 

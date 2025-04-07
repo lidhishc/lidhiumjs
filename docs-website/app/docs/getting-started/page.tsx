@@ -10,8 +10,8 @@ import Drawer from "./components/Drawer";
 import ExposeSection from "./components/sections/ExposeSection";
 import InstallationSection from "./components/sections/InstallationSection";
 import MicroFrontendSection from "./components/sections/MicroFrontendSection";
+import Navbar from "../../components/Navbar";
 import RunApplicationsSection from "./components/sections/RunApplicationsSection";
-import { useTheme } from "../../context/ThemeContext";
 
 const sections = [
   { id: "installation", title: "Installation" },
@@ -26,8 +26,8 @@ const sections = [
 
 export default function GettingStarted() {
   const [activeSection, setActiveSection] = useState("installation");
-  const { theme } = useTheme();
   const mainRef = useRef<HTMLElement>(null);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   useEffect(() => {
     // Get the hash from URL (remove the # symbol)
@@ -38,38 +38,68 @@ export default function GettingStarted() {
     }
   }, []);
 
-  const handleSectionChange = (sectionId: string) => {
-    setActiveSection(sectionId);
-    // Update URL hash when section changes
-    window.location.hash = sectionId;
-    if (mainRef.current) {
+  const handleSectionChange = (section: string) => {
+    setActiveSection(section);
+    setIsDrawerOpen(false);
+
+    // Handle scroll behavior for both mobile and desktop
+    if (window.innerWidth < 768) {
+      // md breakpoint
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else if (mainRef.current) {
       mainRef.current.scrollTop = 0;
     }
   };
 
+  const toggleDrawer = () => {
+    setIsDrawerOpen(!isDrawerOpen);
+  };
+
   return (
-    <div
-      className={`flex h-screen ${
-        theme === "dark" ? "bg-[#0d1b2a] text-white" : "bg-gray-50 text-black"
-      }`}
-    >
-      <Drawer
-        sections={sections}
-        activeSection={activeSection}
-        onSectionChange={handleSectionChange}
-      />
-      <main ref={mainRef} className="flex-1 px-50 pt-6 overflow-y-auto h-[90%]">
-        {activeSection === "installation" && <InstallationSection />}
-        {activeSection === "generate-micro-frontend" && (
-          <MicroFrontendSection />
+    <div className="flex flex-col min-h-screen">
+      <Navbar onDrawerToggle={toggleDrawer} isDrawerOpen={isDrawerOpen} />
+      <div className="flex flex-col md:flex-row w-full flex-1 bg-gray-50 text-black">
+        {/* Drawer */}
+        <div
+          className={`fixed md:sticky top-14 w-64 h-[calc(100vh-3.5rem)] transition-transform duration-300 ease-in-out z-40 ${
+            isDrawerOpen
+              ? "translate-x-0"
+              : "-translate-x-full md:translate-x-0"
+          } bg-gray-50`}
+        >
+          <Drawer
+            sections={sections}
+            activeSection={activeSection}
+            onSectionChange={handleSectionChange}
+            onClose={() => setIsDrawerOpen(false)}
+          />
+        </div>
+
+        {/* Main Content */}
+        <main
+          ref={mainRef}
+          className="flex-1 w-full md:h-[calc(100vh-3.5rem)] px-4 md:px-8 lg:px-12 py-6 md:overflow-y-auto"
+        >
+          {activeSection === "installation" && <InstallationSection />}
+          {activeSection === "generate-micro-frontend" && (
+            <MicroFrontendSection />
+          )}
+          {activeSection === "expose-the-remote-app" && <ExposeSection />}
+          {activeSection === "bind-micro-app" && <BindSection />}
+          {activeSection === "run-applications" && <RunApplicationsSection />}
+          {activeSection === "build-app" && <BuildSection />}
+          {activeSection === "commands" && <CommandsSection />}
+          {activeSection === "dev-tool" && <DevToolSection />}
+        </main>
+
+        {/* Overlay for mobile */}
+        {isDrawerOpen && (
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"
+            onClick={() => setIsDrawerOpen(false)}
+          />
         )}
-        {activeSection === "expose-the-remote-app" && <ExposeSection />}
-        {activeSection === "bind-micro-app" && <BindSection />}
-        {activeSection === "run-applications" && <RunApplicationsSection />}
-        {activeSection === "build-app" && <BuildSection />}
-        {activeSection === "commands" && <CommandsSection />}
-        {activeSection === "dev-tool" && <DevToolSection />}
-      </main>
+      </div>
     </div>
   );
 }
