@@ -4,11 +4,13 @@ import { useEffect, useState } from "react";
 
 import Link from "next/link";
 import Logo from "./Logo";
-import { useTheme } from "../context/ThemeContext";
 
-export default function Navbar() {
-  const { theme, toggleTheme } = useTheme();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+interface NavbarProps {
+  onDrawerToggle?: () => void;
+  isDrawerOpen?: boolean;
+}
+
+export default function Navbar({ onDrawerToggle, isDrawerOpen }: NavbarProps) {
   const [stars, setStars] = useState<number | null>(null);
 
   useEffect(() => {
@@ -23,14 +25,10 @@ export default function Navbar() {
       href="https://github.com/lidhishc/lidhiumjs"
       target="_blank"
       rel="noopener noreferrer"
-      className={`flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-colors border ${
-        theme === "dark"
-          ? "bg-gray-800 hover:bg-gray-700 border-gray-700"
-          : "bg-white hover:bg-gray-50 border-gray-200 shadow-sm"
-      }`}
+      className="flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-colors border bg-white hover:bg-gray-50 border-gray-200 shadow-sm text-gray-900"
     >
       <svg
-        className={`w-5 h-5 ${theme === "dark" ? "text-white" : "text-black"}`}
+        className="w-5 h-5 text-black"
         fill="currentColor"
         viewBox="0 0 24 24"
       >
@@ -45,131 +43,77 @@ export default function Navbar() {
   );
 
   return (
-    <nav
-      className={`w-full ${
-        theme === "dark" ? "bg-black" : "bg-white"
-      } fixed top-0 z-50 border-b ${
-        theme === "dark" ? "border-gray-800" : "border-gray-200"
-      }`}
-    >
-      <div className="mx-auto px-6">
-        <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
-            <Logo width={35} height={35} />
-            <span className="text-xl font-bold text-gray-800 dark:text-white">
-              Lidhium JS
-            </span>
-          </Link>
+    <nav className="w-full bg-white fixed top-0 z-50 border-b border-gray-200">
+      <div className="mx-auto px-4">
+        <div className="flex justify-between items-center h-14">
+          <div className="flex items-center gap-2">
+            {/* Mobile Menu Button */}
+            {onDrawerToggle && (
+              <button
+                onClick={onDrawerToggle}
+                className="md:hidden -ml-2 p-1.5 rounded-lg hover:bg-gray-100 text-gray-700"
+                aria-label="Toggle menu"
+              >
+                {isDrawerOpen ? (
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                ) : (
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 6h16M4 12h16M4 18h16"
+                    />
+                  </svg>
+                )}
+              </button>
+            )}
+            <Link href="/" className="flex items-center gap-1.5">
+              <Logo width={30} height={30} />
+              <span className="text-lg font-bold text-gray-800">
+                Lidhium JS
+              </span>
+            </Link>
+          </div>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="flex items-center space-x-6">
             <Link
               href="/docs/getting-started"
-              className="text-sm hover:opacity-80"
-            >
-              Documentation
-            </Link>
-            <Link href="/docs/examples" className="text-sm hover:opacity-80">
-              Examples
-            </Link>
-            <Link href="/docs/about" className="text-sm hover:opacity-80">
-              About
-            </Link>
-
-            <GitHubButton />
-
-            {/* Theme Toggle Button */}
-            {/* <button
-              onClick={toggleTheme}
-              className={`p-2 rounded-lg transition-colors border ${
-                theme === "dark"
-                  ? "bg-gray-800 hover:bg-gray-700 border-gray-700"
-                  : "bg-white hover:bg-gray-50 border-gray-200 shadow-sm"
-              }`}
-              aria-label="Toggle theme"
-            >
-              <div className="w-5 h-5 flex items-center justify-center">
-                {theme === "light" ? "🌙" : "☀️"}
-              </div>
-            </button> */}
-          </div>
-
-          <div className="flex md:hidden items-center space-x-4">
-            <GitHubButton />
-
-            {/* Theme Toggle Button - Mobile */}
-            <button
-              onClick={toggleTheme}
-              className={`p-2 rounded-lg transition-colors border ${
-                theme === "dark"
-                  ? "bg-gray-800 hover:bg-gray-700 border-gray-700"
-                  : "bg-white hover:bg-gray-50 border-gray-200 shadow-sm"
-              }`}
-              aria-label="Toggle theme"
-            >
-              <div className="w-5 h-5 flex items-center justify-center">
-                {theme === "light" ? "🌙" : "☀️"}
-              </div>
-            </button>
-
-            {/* Mobile Menu Button */}
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="p-2 -mr-2"
-              aria-label="Toggle menu"
-            >
-              <svg
-                className={`w-5 h-5 ${
-                  theme === "dark" ? "text-white" : "text-black"
-                }`}
-                fill="none"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                {isMenuOpen ? (
-                  <path d="M6 18L18 6M6 6l12 12" />
-                ) : (
-                  <path d="M4 6h16M4 12h16M4 18h16" />
-                )}
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile Menu Dropdown */}
-        <div
-          className={`md:hidden transition-all duration-300 ease-in-out ${
-            isMenuOpen
-              ? "max-h-64 opacity-100"
-              : "max-h-0 opacity-0 overflow-hidden"
-          }`}
-        >
-          <div className="py-2 space-y-1">
-            <Link
-              href="/docs/getting-started"
-              className="block hover:opacity-80 py-2 text-sm"
-              onClick={() => setIsMenuOpen(false)}
+              className="hidden md:block text-sm text-gray-700 hover:text-gray-900 transition-colors"
             >
               Documentation
             </Link>
             <Link
               href="/docs/examples"
-              className="block hover:opacity-80 py-2 text-sm"
-              onClick={() => setIsMenuOpen(false)}
+              className="hidden md:block text-sm text-gray-700 hover:text-gray-900 transition-colors"
             >
               Examples
             </Link>
             <Link
               href="/docs/about"
-              className="block hover:opacity-80 py-2 text-sm"
-              onClick={() => setIsMenuOpen(false)}
+              className="hidden md:block text-sm text-gray-700 hover:text-gray-900 transition-colors"
             >
               About
             </Link>
+            <GitHubButton />
           </div>
         </div>
       </div>

@@ -24,7 +24,7 @@ export default function CodeBlock({ code }: CodeBlockProps) {
   };
 
   return (
-    <div className="relative w-3/5 mt-4">
+    <div className="relative mt-4">
       <pre
         className={`p-4 rounded-lg mt-4 overflow-auto relative ${
           theme === "dark"
