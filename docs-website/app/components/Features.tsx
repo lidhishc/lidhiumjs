@@ -37,7 +37,7 @@ export default function Features({ theme }: FeaturesProps) {
         <span className="sr-only">- Feature Overview</span>
       </h2>
       <p className="text-center text-lg mb-8 max-w-2xl mx-auto">
-        A modern JavaScript framework designed for performance, type safety, and
+        A Modern Micro-Frontend CLI designed for performance, type safety, and
         developer experience. Build better applications faster with our
         comprehensive toolset.
       </p>
