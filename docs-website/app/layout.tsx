@@ -9,7 +9,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: {
-    default: "Lidhium JS - Modern JavaScript Framework",
+    default: "Lidhium JS - Modern Micro-Frontend CLI",
     template: "%s | Lidhium JS",
   },
   description:
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   creator: "Lidhish C",
   publisher: "Lidhium JS",
   openGraph: {
-    title: "Lidhium JS - Modern JavaScript Framework",
+    title: "Lidhium JS - Modern Micro-Frontend CLI",
     description: "A powerful CLI tool for micro-frontend development",
     type: "website",
     url: "https://lidhiumjs.com",
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Lidhium JS",
-    description: "Modern JavaScript Framework for Micro-Frontend Development",
+    description: "Modern Micro-Frontend CLI for Micro-Frontend Development",
     images: ["/twitter-image.png"],
   },
   robots: {
