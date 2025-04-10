@@ -35,18 +35,12 @@ export const metadata: Metadata = {
     siteName: "Lidhium JS",
     images: [
       {
-        url: "/og-image.png",
+        url: "/logo3.png",
         width: 1200,
         height: 630,
         alt: "Lidhium JS Framework",
       },
     ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Lidhium JS",
-    description: "Modern Micro-Frontend CLI for Micro-Frontend Development",
-    images: ["/twitter-image.png"],
   },
   robots: {
     index: true,
@@ -60,11 +54,8 @@ export const metadata: Metadata = {
     },
   },
   icons: {
-    icon: "/logo.png",
-    apple: "/logo.png",
-  },
-  verification: {
-    google: "your-google-site-verification",
+    icon: "/logo3.png",
+    apple: "/logo3.png",
   },
 };
 
