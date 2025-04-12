@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "About",
   description:
-    "Learn about Lidhium JS - A modern JavaScript framework for micro-frontend development. Discover our mission, vision, and the team behind the project.",
+    "Learn about Lidhium JS - A Modern Micro-Frontend CLI for micro-frontend development. Discover our mission, vision, and the team behind the project.",
   openGraph: {
     title: "About Lidhium JS",
     description:
