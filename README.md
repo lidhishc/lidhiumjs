@@ -9,6 +9,17 @@ A modern micro-frontend development tool for Vue.js applications.
 [![GitHub issues](https://img.shields.io/github/issues/lidhishc/lidhiumjs)](https://github.com/lidhishc/lidhiumjs/issues)
 [![Discord](https://img.shields.io/badge/Discord-Join%20Chat-7289da?logo=discord&logoColor=white)](https://discord.gg/49hGyf6j)
 
+## Website
+
+Visit [lidhiumjs.com](https://lidhiumjs.com) for:
+
+- 📚 Comprehensive documentation and guides
+- 💡 Best practices and architecture patterns
+- 🎓 Tutorials and examples
+- 🔧 Configuration references
+- 🚀 Getting started guides
+- 👥 Community resources
+
 ## Features
 
 - 🚀 Quick setup for micro-frontend applications
