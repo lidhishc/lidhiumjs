@@ -12,21 +12,27 @@ const {
 process.env.VUE_APP_BASE_URL = "/";
 const CompressionPlugin = require("compression-webpack-plugin");
 
+const isProduction = process.env.NODE_ENV === "production";
+
 module.exports = {
-  context: path.resolve(__dirname, "."), // Ensure correct path
-  mode: process.env.NODE_ENV || "development",
-  // Entry point
+  context: path.resolve(__dirname, "."),
+  mode: isProduction ? "production" : "development",
   entry: "./src/main.ts",
   target: "web",
-  // Output configuration
   output: {
     path: path.resolve(__dirname, "dist"),
     filename: "bundle.[contenthash].js",
-    clean: true, // Cleans the output directory before building
-    publicPath: "auto", // Needed for Module Federation,
+    clean: true,
+    publicPath: "auto",
     chunkFilename: "[name].[contenthash].js",
+    globalObject: "self",
+    hotUpdateChunkFilename: "[id].[fullhash].hot-update.js",
+    hotUpdateMainFilename: "[runtime].[fullhash].hot-update.json",
+    library: {
+      name: getAppName(),
+      type: "var",
+    },
   },
-  // Resolve extensions and aliases
   resolve: {
     extensions: [".ts", ".js", ".vue", ".json"],
     alias: {
@@ -35,18 +41,21 @@ module.exports = {
       "@root": path.resolve(__dirname, "../../"),
     },
   },
-  // Module rules for different file types
   module: {
     rules: [
       {
         test: /\.vue$/,
         loader: "vue-loader",
+        options: {
+          hotReload: false,
+        },
       },
       {
         test: /\.ts$/,
         loader: "ts-loader",
         options: {
           appendTsSuffixTo: [/\.vue$/],
+          transpileOnly: true,
         },
         exclude: /node_modules/,
       },
@@ -86,65 +95,89 @@ module.exports = {
               [
                 "@babel/preset-env",
                 {
-                  targets: "> 0.25%, not dead", // Adjust based on your target browsers
+                  targets: "> 0.25%, not dead",
                   useBuiltIns: "usage",
                   corejs: "3",
                 },
               ],
             ],
+            cacheDirectory: true,
           },
         },
       },
     ],
   },
-
-  // Plugins
   plugins: [
     new VueLoaderPlugin(),
     new NodePolyfillPlugin(),
     new HtmlWebpackPlugin({
       template: "./public/index.html",
+      excludeChunks: ["mfeBBB"],
+      minify: isProduction
+        ? {
+            removeComments: true,
+            collapseWhitespace: true,
+            removeRedundantAttributes: true,
+            useShortDoctype: true,
+            removeEmptyAttributes: true,
+            removeStyleLinkTypeAttributes: true,
+            keepClosingSlash: true,
+            minifyJS: true,
+            minifyCSS: true,
+            minifyURLs: true,
+          }
+        : false,
     }),
     new CompressionPlugin({
       algorithm: "gzip",
       test: /\.(js|css|html|svg)$/,
-      threshold: 10240, // Only compress files > 10kb
-      minRatio: 0.8, // Only compress if compression ratio is better than 0.8
+      threshold: 10240,
+      minRatio: 0.8,
     }),
-    // Define BASE_URL as a global variable
     new webpack.DefinePlugin({
       "process.env.BASE_URL": JSON.stringify("/"),
+      __VUE_OPTIONS_API__: true,
+      __VUE_PROD_DEVTOOLS__: false,
+      __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: false,
     }),
     new ModuleFederationPlugin({
       name: getAppName(),
       filename: "remoteEntry.js",
-      exposes: getExposedComponents(),
+      exposes: {
+        ...getExposedComponents(),
+        "./Routes": "./src/routes.ts",
+      },
       remotes: generateRemoteRoutes(),
       shared: {
-        vue: { singleton: true, eager: true, requiredVersion: "^3.0.0" },
-        vuex: { singleton: true, eager: true, requiredVersion: "^4.0.0" },
+        vue: {
+          singleton: true,
+          eager: true,
+          requiredVersion: "^3.0.0",
+        },
         "vue-router": {
           singleton: true,
           eager: true,
           requiredVersion: "^4.0.0",
         },
-        // Add more shared dependencies as needed
       },
     }),
   ],
-
-  //   // DevServer configuration
   devServer: {
     historyApiFallback: true,
     hot: true,
     watchFiles: ["src/**/*"],
+    static: {
+      directory: path.join(__dirname, "dist"),
+    },
     headers: {
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH, OPTIONS",
       "Access-Control-Allow-Headers":
         "X-Requested-With, content-type, Authorization",
     },
+    client: {
+      overlay: false,
+    },
   },
-  devtool:
-    process.env.NODE_ENV === "development" ? "eval-source-map" : "source-map",
+  devtool: isProduction ? "source-map" : "eval-source-map",
 };

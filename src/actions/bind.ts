@@ -38,5 +38,7 @@ export default function bindActions() {
     ];
 
     fs.writeFileSync(configJsonPath, JSON.stringify(configFile, null, 2));
+
+    console.log(chalk.green("Bind Successful"));
   };
 }

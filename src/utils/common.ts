@@ -103,6 +103,13 @@ export const updateExposedComponents = ({
     remoteComponentValue: `${appName}/${componentName}`,
   };
   fs.writeFileSync(configJsonPath, JSON.stringify(currentConfig, null, 2));
+  console.log(
+    chalk.green(
+      `Component ${chalk.magenta(
+        componentName
+      )} exposed successfully in ${chalk.magenta(appName)}`
+    )
+  );
 };
 
 export function getAppName() {

@@ -2,10 +2,10 @@
 
 import { Command } from "commander";
 import { PackageDetails } from "./intefaces";
+import addGlobalCommands from "./commands";
 import chalk from "chalk";
 import path from "path";
 import { readFileSync } from "fs";
-import addGlobalCommands from "./commands";
 
 const getPackageDetails = (): PackageDetails => {
   let packageDetails: PackageDetails = {

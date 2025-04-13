@@ -14,12 +14,5 @@ export default function exposeActions() {
       componentName,
       componentPath,
     });
-    console.log(
-      chalk.green(
-        `Component ${chalk.magenta(
-          componentName
-        )} exposed successfully in ${chalk.magenta(appName)}`
-      )
-    );
   };
 }
