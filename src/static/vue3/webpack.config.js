@@ -143,10 +143,7 @@ module.exports = {
     new ModuleFederationPlugin({
       name: getAppName(),
       filename: "remoteEntry.js",
-      exposes: {
-        ...getExposedComponents(),
-        "./Routes": "./src/routes.ts",
-      },
+      exposes: getExposedComponents(),
       remotes: generateRemoteRoutes(),
       shared: {
         vue: {
