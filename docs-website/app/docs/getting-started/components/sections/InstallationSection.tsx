@@ -137,7 +137,7 @@ export default function InstallationSection() {
               CLI commands available throughout your system:
             </p>
             <CodeBlock
-              code={`# Using npm\nnpm install -g lidhium\n\n# Using yarn\nyarn global add lidhium`}
+              code={`# Using npm\nnpm install -g @lidhium/cli\n\n# Using yarn\nyarn global add @lidhium/cli`}
             />
           </div>
 
