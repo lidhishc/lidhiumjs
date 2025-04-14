@@ -4,13 +4,17 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const webpack = require("webpack");
 const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 const { ModuleFederationPlugin } = require("webpack").container;
-const {
-  getExposedComponents,
-  getAppName,
-  generateRemoteRoutes,
-} = require("./src/utils/utils");
+const { configManager } = require("@lidhium/common");
 process.env.VUE_APP_BASE_URL = "/";
 const CompressionPlugin = require("compression-webpack-plugin");
+
+// Must call init first with the context
+configManager.init(__dirname);
+
+// Then you can use the methods
+const remoteRoutes = configManager.generateRemoteRoutes();
+const exposedComponents = configManager.getExposedComponents();
+const appName = configManager.getAppName();
 
 module.exports = {
   context: path.resolve(__dirname, "."), // Ensure correct path
@@ -116,10 +120,10 @@ module.exports = {
       "process.env.BASE_URL": JSON.stringify("/"),
     }),
     new ModuleFederationPlugin({
-      name: getAppName(),
+      name: appName,
       filename: "remoteEntry.js",
-      exposes: getExposedComponents(),
-      remotes: generateRemoteRoutes(),
+      exposes: exposedComponents,
+      remotes: remoteRoutes,
       shared: {
         vue: { singleton: true, eager: true, requiredVersion: "^3.0.0" },
         vuex: { singleton: true, eager: true, requiredVersion: "^4.0.0" },
