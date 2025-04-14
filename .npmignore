@@ -25,3 +25,6 @@ dev-tool/yarn.lock
 
 # Ignore docs-website files except dist
 docs-website
+
+# Ignore packages
+packages/common

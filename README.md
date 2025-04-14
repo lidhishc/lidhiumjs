@@ -19,7 +19,7 @@ A powerful CLI tool for creating and managing micro-frontend applications.
 ## Installation
 
 ```bash
-npm install -g lidhium
+npm install -g @lidhium/cli
 ```
 
 ## Usage

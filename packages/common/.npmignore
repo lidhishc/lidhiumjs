@@ -1,0 +1,37 @@
+# Development files
+src/
+node_modules/
+.git/
+.gitignore
+.npmignore
+.eslintrc
+.prettierrc
+*.log
+*.tsbuildinfo
+
+# Test files
+__tests__/
+*.test.*
+*.spec.*
+
+# Build files
+dist/test/
+dist/coverage/
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Documentation
+README.md
+LICENSE
+CHANGELOG.md
+docs/
+
+# Misc
+.env
+.env.*
+*.local
+src/*
