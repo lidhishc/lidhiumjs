@@ -71,6 +71,7 @@ export default () => async (appName: string) => {
           "dev-tool": "lidhium dev-tool",
         },
         dependencies: {
+          "@module-federation/runtime": "^0.11.4",
           "core-js": "3.40.0",
           "eslint-config-prettier": "10.0.1",
           fs: "^0.0.1-security",
@@ -91,7 +92,7 @@ export default () => async (appName: string) => {
         devDependencies: {
           "@babel/core": "^7.26.0",
           "@babel/preset-env": "^7.26.0",
-          "@lidhium/common": "1.0.1",
+          "@lidhium/common": "1.0.2",
           "@types/jest": "^29.5.14",
           "@types/mocha": "^10.0.10",
           "@types/node": "^22.13.8",

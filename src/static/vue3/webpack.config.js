@@ -5,7 +5,6 @@ const webpack = require("webpack");
 const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 const { ModuleFederationPlugin } = require("webpack").container;
 const { configManager } = require("@lidhium/common");
-
 process.env.VUE_APP_BASE_URL = "/";
 const CompressionPlugin = require("compression-webpack-plugin");
 
@@ -17,16 +16,14 @@ const remoteRoutes = configManager.generateRemoteRoutes();
 const exposedComponents = configManager.getExposedComponents();
 const appName = configManager.getAppName();
 
-const isProduction = process.env.NODE_ENV === "production";
-
 module.exports = {
   context: path.resolve(__dirname, "."),
-  mode: isProduction ? "production" : "development",
+  mode: process.env.NODE_ENV || "development",
   entry: "./src/main.ts",
   target: "web",
   output: {
     path: path.resolve(__dirname, "dist"),
-    filename: "[name].[contenthash].js",
+    filename: "bundle.[contenthash].js",
     clean: true,
     publicPath: "auto",
     chunkFilename: "[name].[contenthash].js",
@@ -34,7 +31,7 @@ module.exports = {
     hotUpdateChunkFilename: "[id].[fullhash].hot-update.js",
     hotUpdateMainFilename: "[runtime].[fullhash].hot-update.json",
     library: {
-      name: appName,
+      name: configManager.getAppName(),
       type: "var",
     },
   },
@@ -118,20 +115,18 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: "./public/index.html",
       excludeChunks: ["mfeBBB"],
-      minify: isProduction
-        ? {
-            removeComments: true,
-            collapseWhitespace: true,
-            removeRedundantAttributes: true,
-            useShortDoctype: true,
-            removeEmptyAttributes: true,
-            removeStyleLinkTypeAttributes: true,
-            keepClosingSlash: true,
-            minifyJS: true,
-            minifyCSS: true,
-            minifyURLs: true,
-          }
-        : false,
+      minify: {
+        removeComments: true,
+        collapseWhitespace: true,
+        removeRedundantAttributes: true,
+        useShortDoctype: true,
+        removeEmptyAttributes: true,
+        removeStyleLinkTypeAttributes: true,
+        keepClosingSlash: true,
+        minifyJS: true,
+        minifyCSS: true,
+        minifyURLs: true,
+      },
     }),
     new CompressionPlugin({
       algorithm: "gzip",
@@ -141,6 +136,7 @@ module.exports = {
     }),
     new webpack.DefinePlugin({
       "process.env.BASE_URL": JSON.stringify("/"),
+      "process.env.APP_NAME": JSON.stringify(appName),
       __VUE_OPTIONS_API__: true,
       __VUE_PROD_DEVTOOLS__: false,
       __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: false,
@@ -148,10 +144,7 @@ module.exports = {
     new ModuleFederationPlugin({
       name: appName,
       filename: "remoteEntry.js",
-      exposes: {
-        ...exposedComponents,
-        "./Routes": "./src/routes.ts",
-      },
+      exposes: exposedComponents,
       remotes: remoteRoutes,
       shared: {
         vue: {
@@ -170,7 +163,6 @@ module.exports = {
   devServer: {
     historyApiFallback: true,
     hot: true,
-    port: 3001,
     static: {
       directory: path.join(__dirname, "dist"),
     },
@@ -184,5 +176,6 @@ module.exports = {
       overlay: false,
     },
   },
-  devtool: isProduction ? "source-map" : "eval-source-map",
+  devtool:
+    process.env.NODE_ENV === "development" ? "eval-source-map" : "source-map",
 };
