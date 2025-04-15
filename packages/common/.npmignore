@@ -35,3 +35,15 @@ docs/
 .env.*
 *.local
 src/*
+
+# Ignore dist
+dist/
+
+# Ignore node_modules
+node_modules/
+
+# Ignore packages
+packages/
+
+packages-lock.json
+

@@ -6,14 +6,17 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && node scripts/copy-files.js",
     "test": "jest"
   },
   "dependencies": {
+    "@module-federation/runtime": "^0.11.4",
+    "core-js": "^3.41.0",
     "vue": "^3.0.0"
   },
   "devDependencies": {
     "@types/node": "^18.0.0",
+    "@vue/runtime-core": "^3.5.13",
     "typescript": "^4.9.0"
   },
   "publishConfig": {

@@ -8,8 +8,13 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "lib": ["es2018", "dom"],
+    "downlevelIteration": true,
+    "types": ["node"],
+    "allowJs": true,
+    "resolveJsonModule": true
   },
-  "include": ["src"],
+  "include": ["src", "src/**/*.vue"],
   "exclude": ["node_modules", "dist"]
 } 
