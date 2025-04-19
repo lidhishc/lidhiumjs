@@ -43,7 +43,7 @@ export default function Navbar({ onDrawerToggle, isDrawerOpen }: NavbarProps) {
   );
   const DiscordButton = () => (
     <Link
-      href="https://discord.gg/49hGyf6j"
+      href="https://discord.gg/AUEUdtY2yJ"
       target="_blank"
       rel="noopener noreferrer"
       className="flex items-center space-x-2 px-3 py-1.5 rounded-lg transition-colors border bg-[#5865F2] hover:bg-[#4752C4] border-[#4752C4] shadow-sm text-white"
