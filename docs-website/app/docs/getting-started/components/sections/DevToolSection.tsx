@@ -23,11 +23,11 @@ export default function DevToolSection() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="p-4 bg-blue-50 rounded-lg">
               <h4 className="font-semibold mb-2">Using Yarn</h4>
-              <CodeBlock code="yarn dev-tool" />
+              <CodeBlock code="yarn dev-tool -p 5002" />
             </div>
             <div className="p-4 bg-green-50 rounded-lg">
               <h4 className="font-semibold mb-2">Using NPM</h4>
-              <CodeBlock code="npm run dev-tool" />
+              <CodeBlock code="npm run dev-tool -p 5002" />
             </div>
           </div>
           <p className="text-sm mt-4 text-gray-600">
