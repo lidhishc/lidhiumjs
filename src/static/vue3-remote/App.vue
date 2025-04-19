@@ -1,18 +1,16 @@
 <script lang="ts">
-const appName = process.env.APP_NAME;
+import LidhiumBaseRemoteComponent from "@/components/LidhiumBaseRemoteComponent.vue";
 
 export default {
-  name: appName,
-  data() {
-    return {
-      appName,
-    };
+  name: "LidhiumRemoteApp",
+  components: {
+    LidhiumBaseRemoteComponent,
   },
 };
 </script>
 
 <template>
   <div>
-    <h1>Lidhium Remote App : {{ appName }}</h1>
+    <LidhiumBaseRemoteComponent />
   </div>
 </template>

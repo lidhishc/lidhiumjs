@@ -28,3 +28,5 @@ docs-website
 
 # Ignore packages
 packages/common
+
+*/**/package-lock.json
