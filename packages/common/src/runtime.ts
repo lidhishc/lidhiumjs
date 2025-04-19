@@ -6,8 +6,135 @@ import {
   provide,
 } from "vue";
 import { FederationHost } from "@module-federation/runtime";
-import Loader from "./vue/Loader.vue";
-import ErrorMessage from "./vue/ErrorMessage.vue";
+
+const Loader = defineComponent({
+  name: "Loader",
+  setup() {
+    return () =>
+      h(
+        "div",
+        {
+          class: "loader-container",
+          style: `
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          min-height: 100px;
+        `,
+        },
+        [
+          h("div", {
+            class: "loader",
+            style: `
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+          `,
+          }),
+          h(
+            "span",
+            {
+              class: "loader-text",
+              style: `
+            margin-top: 10px;
+            color: #666;
+            font-size: 14px;
+          `,
+            },
+            "Loading..."
+          ),
+          h(
+            "style",
+            null,
+            `
+            @keyframes spin {
+              0% { transform: rotate(0deg); }
+              100% { transform: rotate(360deg); }
+            }
+          `
+          ),
+        ]
+      );
+  },
+});
+
+const ErrorMessage = defineComponent({
+  name: "ErrorMessage",
+  emits: ["retry"],
+  setup() {
+    return () =>
+      h(
+        "div",
+        {
+          class: "error-container",
+          style: `
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+            padding: 20px;
+            text-align: center;
+          `,
+        },
+        [
+          h(
+            "div",
+            {
+              class: "error-icon",
+              style: `
+              font-size: 32px;
+              margin-bottom: 16px;
+            `,
+            },
+            "⚠️"
+          ),
+          h(
+            "div",
+            {
+              class: "error-message",
+              style: `
+              color: #e74c3c;
+              font-size: 16px;
+              margin-bottom: 16px;
+            `,
+            },
+            "Failed to load component"
+          ),
+          h(
+            "button",
+            {
+              class: "retry-button",
+              style: `
+                background-color: #3498db;
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 14px;
+                transition: background-color 0.3s ease;
+              `,
+              onMouseover: (e: MouseEvent) => {
+                (e.target as HTMLElement).style.backgroundColor = "#2980b9";
+              },
+              onMouseout: (e: MouseEvent) => {
+                (e.target as HTMLElement).style.backgroundColor = "#3498db";
+              },
+              onClick: () => {
+                window.location.reload();
+              },
+            },
+            "Retry"
+          ),
+        ]
+      );
+  },
+});
 
 interface AppConfig {
   port: string;
@@ -71,17 +198,41 @@ const setFederationHost = (host: FederationHost) => {
 
 const loadRemoteComponentVue = (
   componentName: string,
-  injectProps?: Record<string, any>,
-  loadingComponent: Component = Loader,
-  errorComponent: Component = ErrorMessage,
-  delay: number = 200,
-  timeout: number = 5000,
-  suspensible: boolean = false,
-  onError?: Function
+  inputData: {
+    injectProps?: Record<string, any>;
+    customLoaderComponent?: Component;
+    errorComponent?: Component;
+    delay?: number;
+    timeout?: number;
+    suspensible?: boolean;
+    forcedLoadingTime?: number;
+    onError?: Function;
+  } = {}
 ) => {
+  const {
+    injectProps = {},
+    customLoaderComponent,
+    errorComponent = ErrorMessage,
+    delay = 0,
+    timeout = 5000,
+    suspensible = false,
+    forcedLoadingTime = 0,
+    onError = () => {},
+  } = inputData;
+
+  // Use the custom loader if provided, otherwise use the default Loader
+  const loadingComponent = customLoaderComponent || Loader;
+
   return defineAsyncComponent({
     loader: async () => {
       try {
+        // Add forced loading time at the start
+        if (forcedLoadingTime > 0) {
+          await new Promise((resolve) =>
+            setTimeout(resolve, forcedLoadingTime)
+          );
+        }
+
         if (!federationHost) {
           throw new Error(
             "Module Federation runtime not initialized. Call setFederationHost first."
@@ -111,7 +262,7 @@ const loadRemoteComponentVue = (
           throw new Error(`Failed to load ${componentName} container`);
         }
 
-        console.log(`Container loaded for ${componentName}:`, container);
+        console.log(`Container loaded for ${componentName}:`);
 
         return defineComponent({
           name: "RemoteComponentWrapper",
@@ -132,7 +283,18 @@ const loadRemoteComponentVue = (
           `Error loading remote component ${componentName}:`,
           error
         );
-        throw error;
+        // Return a component that will show the error message
+        return defineComponent({
+          name: "ErrorComponent",
+          setup() {
+            return () =>
+              h(errorComponent, {
+                onRetry: () => {
+                  window.location.reload();
+                },
+              });
+          },
+        });
       }
     },
     loadingComponent,

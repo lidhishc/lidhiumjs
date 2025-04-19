@@ -6,6 +6,7 @@ export interface LidhiumConfig {
     [key: string]: {
       url?: string;
       remotes?: string[];
+      appType?: "remote" | "host";
       exposedComponents?: {
         [key: string]: {
           source: string;
@@ -227,6 +228,16 @@ class LidhiumConfigManager {
     );
     console.log("Exposed components:", components);
     return components;
+  }
+
+  /**
+   * Gets the application type for the current app
+   * @returns The application type string or undefined if not set
+   */
+  public getAppType(): string | undefined {
+    this.checkInitialized();
+    const currentApp = this.getCurrentApp();
+    return currentApp?.appType;
   }
 }
 

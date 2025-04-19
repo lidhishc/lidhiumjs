@@ -15,6 +15,7 @@ configManager.init(__dirname);
 const remoteRoutes = configManager.generateRemoteRoutes();
 const exposedComponents = configManager.getExposedComponents();
 const appName = configManager.getAppName();
+const appType = configManager.getAppType();
 
 module.exports = {
   context: path.resolve(__dirname, "."),
@@ -137,6 +138,7 @@ module.exports = {
     new webpack.DefinePlugin({
       "process.env.BASE_URL": JSON.stringify("/"),
       "process.env.APP_NAME": JSON.stringify(appName),
+      "process.env.APP_TYPE": JSON.stringify(appType),
       __VUE_OPTIONS_API__: true,
       __VUE_PROD_DEVTOOLS__: false,
       __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: false,

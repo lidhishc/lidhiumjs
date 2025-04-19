@@ -1,6 +1,6 @@
 <script lang="ts">
 export default {
-  name: "App-Host",
+  name: "Home",
   data() {
     return {
       toolName: "CLI Tool",

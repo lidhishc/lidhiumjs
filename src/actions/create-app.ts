@@ -73,7 +73,9 @@ export async function createApp({
   createFolder(`./apps/${appName}`);
   copyFolder(`../static/vue3`, `./apps/${appName}`);
 
-  if (!Object.keys(config.apps).length) {
+  const isHostApp = !Object.keys(config.apps).length;
+
+  if (isHostApp) {
     updateAppConfig({
       port,
       appType: "host",
@@ -82,6 +84,7 @@ export async function createApp({
       remotes: [],
       exposedComponents: {},
     });
+    copyFolder(`../static/vue3-host`, `./apps/${appName}/src`);
   } else {
     updateAppConfig({
       port,
@@ -91,6 +94,7 @@ export async function createApp({
       remotes: [],
       exposedComponents: {},
     });
+    copyFolder(`../static/vue3-remote`, `./apps/${appName}/src`);
   }
 
   console.log(
