@@ -30,3 +30,28 @@ docs-website
 packages/common
 
 */**/package-lock.json
+
+# Ignore examples
+examples
+
+# Ignore tests
+tests
+
+# Ignore .gitignore
+.gitignore
+
+# Ignore .npmignore
+.npmignore
+
+# Ignore .history
+.history
+
+# Ignore .vscode
+.vscode
+
+# Ignore .github
+.github
+
+# Ignore .husky
+.husky
+
