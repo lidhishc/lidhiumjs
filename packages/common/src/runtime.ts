@@ -1,321 +1,233 @@
 import {
+  App,
   Component,
-  defineAsyncComponent,
+  createApp,
   defineComponent,
   h,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
   provide,
+  ref,
 } from "vue";
+import { ErrorMessage, Loader } from "./components";
+
 import { FederationHost } from "@module-federation/runtime";
+import { getImportInfo } from "./config";
 
-const Loader = defineComponent({
-  name: "Loader",
-  setup() {
-    return () =>
-      h(
-        "div",
-        {
-          class: "loader-container",
-          style: `
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          min-height: 100px;
-        `,
-        },
-        [
-          h("div", {
-            class: "loader",
-            style: `
-            width: 40px;
-            height: 40px;
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #3498db;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-          `,
-          }),
-          h(
-            "span",
-            {
-              class: "loader-text",
-              style: `
-            margin-top: 10px;
-            color: #666;
-            font-size: 14px;
-          `,
-            },
-            "Loading..."
-          ),
-          h(
-            "style",
-            null,
-            `
-            @keyframes spin {
-              0% { transform: rotate(0deg); }
-              100% { transform: rotate(360deg); }
-            }
-          `
-          ),
-        ]
-      );
-  },
-});
+// interface AppConfig {
+//   port: string;
+//   appType: string;
+//   remotes: string[];
+//   exposedComponents: Record<string, any>;
+//   url: string;
+// }
 
-const ErrorMessage = defineComponent({
-  name: "ErrorMessage",
-  emits: ["retry"],
-  setup() {
-    return () =>
-      h(
-        "div",
-        {
-          class: "error-container",
-          style: `
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 200px;
-            padding: 20px;
-            text-align: center;
-          `,
-        },
-        [
-          h(
-            "div",
-            {
-              class: "error-icon",
-              style: `
-              font-size: 32px;
-              margin-bottom: 16px;
-            `,
-            },
-            "⚠️"
-          ),
-          h(
-            "div",
-            {
-              class: "error-message",
-              style: `
-              color: #e74c3c;
-              font-size: 16px;
-              margin-bottom: 16px;
-            `,
-            },
-            "Failed to load component"
-          ),
-          h(
-            "button",
-            {
-              class: "retry-button",
-              style: `
-                background-color: #3498db;
-                color: white;
-                border: none;
-                padding: 8px 16px;
-                border-radius: 4px;
-                cursor: pointer;
-                font-size: 14px;
-                transition: background-color 0.3s ease;
-              `,
-              onMouseover: (e: MouseEvent) => {
-                (e.target as HTMLElement).style.backgroundColor = "#2980b9";
-              },
-              onMouseout: (e: MouseEvent) => {
-                (e.target as HTMLElement).style.backgroundColor = "#3498db";
-              },
-              onClick: () => {
-                window.location.reload();
-              },
-            },
-            "Retry"
-          ),
-        ]
-      );
-  },
-});
+// interface Config {
+//   apps: Record<string, AppConfig>;
+// }
 
-interface AppConfig {
-  port: string;
-  appType: string;
-  remotes: string[];
-  exposedComponents: Record<string, any>;
-  url: string;
-}
+// interface Remote {
+//   name: string;
+//   entry: string;
+// }
 
-interface Config {
-  apps: Record<string, AppConfig>;
-}
-
-interface Remote {
-  name: string;
-  entry: string;
-}
-
-interface RemoteModule {
-  default: Component;
-}
+// interface RemoteModule {
+//   default: {
+//     [key: string]: Component;
+//   };
+// }
 
 // Track initialized containers
-const remoteContainerInitialized: Record<string, boolean> = {};
+// const remoteContainerInitialized: Record<string, boolean> = {};
 
-let federationHost: FederationHost | null = null;
+// let federationHost: FederationHost | null = null;
 
-const getRuntimeConfig = (appName: string, config: Config) => {
-  const appConfig = config.apps[appName];
-  if (!appConfig) {
-    throw new Error(
-      `App ${appName} not found in config. Available apps: ${Object.keys(
-        config.apps
-      ).join(", ")}`
-    );
-  }
+// const getRuntimeConfig = (appName: string, config: Config) => {
+//   const appConfig = config.apps[appName];
+//   if (!appConfig) {
+//     throw new Error(
+//       `App ${appName} not found in config. Available apps: ${Object.keys(
+//         config.apps
+//       ).join(", ")}`
+//     );
+//   }
 
-  const remotes = appConfig.remotes
-    .map((remoteName: string) => {
-      const remoteConfig = config.apps[remoteName];
-      if (!remoteConfig) {
-        console.error(`Remote ${remoteName} not found in config`);
-        return null;
-      }
-      return {
-        name: remoteName,
-        entry: `${remoteConfig.url}/remoteEntry.js`,
-      } as Remote;
-    })
-    .filter((remote): remote is Remote => remote !== null);
+//   const remotes = appConfig.remotes
+//     .map((remoteName: string) => {
+//       const remoteConfig = config.apps[remoteName];
+//       if (!remoteConfig) {
+//         console.error(`Remote ${remoteName} not found in config`);
+//         return null;
+//       }
+//       return {
+//         name: remoteName,
+//         entry: `${remoteConfig.url}/remoteEntry.js`,
+//       } as Remote;
+//     })
+//     .filter((remote): remote is Remote => remote !== null);
 
-  return {
-    name: appName,
-    remotes,
-  };
-};
+//   return {
+//     name: appName,
+//     remotes,
+//   };
+// };
 
-const setFederationHost = (host: FederationHost) => {
-  federationHost = host;
-};
+// const setFederationHost = (host: FederationHost) => {
+//   federationHost = host;
+// };
 
-const loadRemoteComponentVue = (
-  componentName: string,
-  inputData: {
+type RemoteOptions = {
+  /** Dynamic import that returns the remote module. */
+  importFn: () => Promise<any>;
+  /** Props forwarded to the remote root component. */
+  componentProps?: {
     injectProps?: Record<string, any>;
-    customLoaderComponent?: Component;
     errorComponent?: Component;
+    loadingComponent?: Component;
     delay?: number;
     timeout?: number;
     suspensible?: boolean;
     forcedLoadingTime?: number;
-    onError?: Function;
-  } = {}
-) => {
+    onError?: () => void;
+  };
+  /** Fail & show error after this many ms (default 20 s). */
+  timeout?: number;
+};
+
+function loadRemoteComponentVue(opts: RemoteOptions) {
+  const { importFn, componentProps = {}, timeout: globalTimeout = 0 } = opts;
+
   const {
     injectProps = {},
-    customLoaderComponent,
     errorComponent = ErrorMessage,
-    delay = 0,
-    timeout = 5000,
-    suspensible = false,
+    loadingComponent = Loader,
+    timeout: componentTimeout = 0,
     forcedLoadingTime = 0,
     onError = () => {},
-  } = inputData;
+  } = componentProps;
 
-  // Use the custom loader if provided, otherwise use the default Loader
-  const loadingComponent = customLoaderComponent || Loader;
+  // Use the smaller timeout value between global and component level
+  const timeout = Math.min(globalTimeout, componentTimeout);
 
-  return defineAsyncComponent({
-    loader: async () => {
-      try {
-        // Add forced loading time at the start
-        if (forcedLoadingTime > 0) {
-          await new Promise((resolve) =>
-            setTimeout(resolve, forcedLoadingTime)
-          );
+  const { appName, componentName } = getImportInfo(importFn);
+  const containerId = `remote-${appName}-${componentName}`;
+
+  return defineComponent({
+    name: `Remote_${appName}_${componentName}`,
+    inheritAttrs: false,
+
+    setup() {
+      const isLoading = ref(true);
+      const error = ref<string | null>(null);
+      let remoteApp: App | null = null;
+      let timer: number | null = null;
+
+      function fail(message: string) {
+        error.value = message;
+        isLoading.value = false;
+        if (remoteApp) {
+          remoteApp.unmount();
+          remoteApp = null;
         }
+        onError();
+      }
 
-        if (!federationHost) {
-          throw new Error(
-            "Module Federation runtime not initialized. Call setFederationHost first."
-          );
-        }
+      async function load() {
+        try {
+          error.value = null;
+          isLoading.value = true;
+          let isTimedOut = false;
 
-        // Initialize container if not already done
-        if (!remoteContainerInitialized[componentName]) {
-          console.log(`Loading remote component container: ${componentName}`);
-          try {
-            await federationHost.loadRemote(componentName);
-          } catch (error) {
-            console.error(
-              `Error loading remote component ${componentName}:`,
-              error
-            );
-            throw error;
+          // Set timeout before loading
+          if (timeout > 0) {
+            timer = window.setTimeout(() => {
+              console.log("Loading timed out after", timeout / 1000, "seconds");
+              isTimedOut = true;
+              fail(`Loading timed out after ${timeout / 1000}s`);
+              clearTimeout(timer!);
+            }, timeout);
           }
-          remoteContainerInitialized[componentName] = true;
-          console.log(`Remote container initialized: ${componentName}`);
-        }
 
-        const container = (await federationHost.loadRemote(
-          componentName
-        )) as RemoteModule;
-        if (!container?.default) {
-          throw new Error(`Failed to load ${componentName} container`);
-        }
+          if (forcedLoadingTime > 0) {
+            await new Promise((r) => setTimeout(r, forcedLoadingTime));
+          }
 
-        console.log(`Container loaded for ${componentName}:`);
+          // Check if we've timed out before proceeding
+          if (isTimedOut) {
+            return;
+          }
 
-        return defineComponent({
-          name: "RemoteComponentWrapper",
-          setup() {
-            // Provide all props for injection
-            if (injectProps) {
-              Object.entries(injectProps).forEach(([key, value]) => {
-                const actualValue =
-                  typeof value === "function" ? value() : value;
-                provide(key, actualValue);
+          const mod = await importFn();
+
+          // Check again if we've timed out during the import
+          if (isTimedOut) {
+            return;
+          }
+
+          clearTimeout(timer!);
+
+          const remoteRoot = mod.default ?? mod;
+          if (!remoteRoot) throw new Error("Remote has no default export");
+
+          await nextTick();
+          const container = document.getElementById(containerId);
+          if (!container) throw new Error(`Missing #${containerId} in DOM`);
+
+          container.innerHTML = "";
+          const target = document.createElement("div");
+          target.className = "remote-component-mount";
+          container.appendChild(target);
+
+          remoteApp = createApp({
+            setup() {
+              provide("remoteProps", {
+                ...injectProps,
+                appName,
+                componentName,
               });
-            }
-            return () => h(container.default, injectProps);
-          },
-        });
-      } catch (error) {
-        console.error(
-          `Error loading remote component ${componentName}:`,
-          error
-        );
-        // Return a component that will show the error message
-        return defineComponent({
-          name: "ErrorComponent",
-          setup() {
-            return () =>
-              h(errorComponent, {
-                onRetry: () => {
-                  window.location.reload();
-                },
-              });
-          },
-        });
+              return () => h(remoteRoot);
+            },
+          });
+
+          remoteApp.mount(target);
+          isLoading.value = false;
+        } catch (e) {
+          fail(e instanceof Error ? e.message : String(e));
+        }
       }
-    },
-    loadingComponent,
-    errorComponent,
-    onError(error) {
-      console.error("Error in remote component:", error);
-      if (onError) {
-        onError(error);
+
+      function retry() {
+        if (remoteApp) {
+          remoteApp.unmount();
+          remoteApp = null;
+        }
+        load();
       }
+
+      onMounted(load);
+      onBeforeUnmount(() => {
+        if (timer) clearTimeout(timer);
+        if (remoteApp) remoteApp.unmount();
+      });
+
+      return () =>
+        h("div", { class: "relative w-full h-full" }, [
+          h("div", {
+            id: containerId,
+            class: "remote-component-container w-full h-full",
+          }),
+
+          isLoading.value && h(loadingComponent),
+
+          error.value &&
+            h(errorComponent, {
+              onRetry: retry,
+              error: error.value,
+            }),
+        ]);
     },
-    delay,
-    timeout,
-    suspensible,
   });
-};
+}
 
-export {
-  getRuntimeConfig,
-  loadRemoteComponentVue,
-  setFederationHost,
-  type AppConfig,
-  type Config,
-  type Remote,
-};
+export { loadRemoteComponentVue, type RemoteOptions };

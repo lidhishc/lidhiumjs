@@ -17,6 +17,51 @@ export interface LidhiumConfig {
   };
 }
 
+/**
+ * Extract app name and component name from import string
+ * @param importString The import string in format "appName/ComponentName"
+ * @returns Object containing appName and componentName
+ */
+export function extractImportInfo(importString: string): {
+  appName: string;
+  componentName: string;
+} {
+  const [appName, componentName] = importString.split("/");
+  return { appName, componentName };
+}
+
+/**
+ * Get app and component name from import function
+ * @param importFn The import function
+ * @returns Object containing appName and componentName
+ */
+export function getImportInfo(importFn: () => Promise<any>): {
+  appName: string;
+  componentName: string;
+} {
+  const importString = importFn.toString();
+
+  // Handle webpack container format
+  const webpackMatch = importString.match(
+    /webpack\/container\/remote\/([^/]+)\/([^"]+)/
+  );
+  if (webpackMatch) {
+    const [_, appName, componentName] = webpackMatch;
+    return { appName, componentName };
+  }
+
+  // Handle standard import format
+  const standardMatch = importString.match(/import\("([^"]+)"\)/);
+  if (standardMatch) {
+    const [appName, componentName] = standardMatch[1].split("/");
+    return { appName, componentName };
+  }
+
+  throw new Error(
+    "Invalid import function format. Expected either webpack container format or standard import format"
+  );
+}
+
 export interface WebpackConfig {
   publicPath: string;
   devtool: string;

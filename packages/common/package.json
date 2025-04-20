@@ -1,7 +1,7 @@
 {
   "name": "@lidhium/common",
   "private": false,
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Common utilities for Lidhium micro-frontend framework",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -12,11 +12,10 @@
   "dependencies": {
     "@module-federation/runtime": "^0.11.4",
     "core-js": "^3.41.0",
-    "vue": "^3.0.0"
+    "vue": "^3.5.13"
   },
   "devDependencies": {
     "@types/node": "^18.0.0",
-    "@vue/runtime-core": "^3.5.13",
     "typescript": "^4.9.0"
   },
   "publishConfig": {
