@@ -1,0 +1,50 @@
+{
+  "project": "dashboard-sample",
+  "webapp": "vue3",
+  "bundler": "webpack",
+  "apps": {
+    "shell": {
+      "port": "3200",
+      "appType": "host",
+      "remotes": ["auth", "landing_app"],
+      "exposedComponents": {},
+      "url": "http://localhost:3200"
+    },
+    "auth": {
+      "port": "3201",
+      "appType": "remote",
+      "remotes": ["landing_app"],
+      "exposedComponents": {
+        "Login": {
+          "source": "./src/components/Login.vue",
+          "remoteComponentValue": "auth/Login"
+        }
+      },
+      "url": "http://localhost:3201"
+    },
+    "landing_app": {
+      "port": "3202",
+      "appType": "remote",
+      "remotes": ["charts"],
+      "exposedComponents": {
+        "LandingPage": {
+          "source": "./src/components/LandingPage.vue",
+          "remoteComponentValue": "landing_app/LandingPage"
+        }
+      },
+      "url": "http://localhost:3202"
+    },
+    "charts": {
+      "port": "3203",
+      "appType": "remote",
+      "remotes": [],
+      "exposedComponents": {
+        "Chart": {
+          "source": "./src/components/Chart.vue",
+          "remoteComponentValue": "charts/Chart"
+        }
+      },
+      "url": "http://localhost:3203"
+    }
+  }
+}

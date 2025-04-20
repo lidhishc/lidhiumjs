@@ -1,0 +1,25 @@
+{
+  "extends":"../../tsconfig.json",
+  "compilerOptions": {
+    "resolveJsonModule": true,
+   "outDir": "./dist",
+    "rootDir": ".",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "src/*"
+      ]
+    },
+    "types": ["node", "jest","mocha"]
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "tests/**/*.ts",
+    "tests/**/*.tsx",
+    "src/utils/*.js"],
+  "exclude": [
+    "node_modules"
+  ]
+}

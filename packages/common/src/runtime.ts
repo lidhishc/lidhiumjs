@@ -95,21 +95,45 @@ type RemoteOptions = {
   timeout?: number;
 };
 
+/**
+ * Load a remote Vue component with type-safe props and configuration.
+ * @example
+ * ```ts
+ * const LoginRemote = loadRemoteComponentVue({
+ *   // Dynamic import function for the remote component
+ *   importFn: () => import("auth/Login"),
+ *   componentProps: {
+ *     // Props to inject into the remote component
+ *     injectProps: {
+ *       router,
+ *     },
+ *     // Force loading state for 4 seconds
+ *     forcedLoadingTime: 4000,
+ *     // Custom error/loading components
+ *     errorComponent: MyErrorComponent,
+ *     loadingComponent: MyLoadingComponent,
+ *     // Timeout in milliseconds
+ *     timeout: 5000,
+ *     // Callback when error occurs
+ *     onError: () => console.error("Failed to load remote component")
+ *   },
+ * });
+ * ```
+ */
+
 function loadRemoteComponentVue(opts: RemoteOptions) {
-  const { importFn, componentProps = {}, timeout: globalTimeout = 0 } = opts;
+  const { importFn, componentProps = {} } = opts;
 
   const {
     injectProps = {},
     errorComponent = ErrorMessage,
     loadingComponent = Loader,
-    timeout: componentTimeout = 0,
+    timeout = 0,
     forcedLoadingTime = 0,
     onError = () => {},
   } = componentProps;
 
   // Use the smaller timeout value between global and component level
-  const timeout = Math.min(globalTimeout, componentTimeout);
-
   const { appName, componentName } = getImportInfo(importFn);
   const containerId = `remote-${appName}-${componentName}`;
 
@@ -193,6 +217,7 @@ function loadRemoteComponentVue(opts: RemoteOptions) {
           remoteApp.mount(target);
           isLoading.value = false;
         } catch (e) {
+          console.error(e);
           fail(e instanceof Error ? e.message : String(e));
         }
       }

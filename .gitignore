@@ -38,3 +38,5 @@ firebase-config.js
 serviceAccountKey.json
 .firebase-config.js
 .env.firebase
+
+.history

@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "strict": true,
+    "jsx": "preserve",
+    "moduleResolution": "Node",
+    "experimentalDecorators": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "useDefineForClassFields": true,
+    "sourceMap": true,
+    "lib": [
+      "ESNext",
+      "DOM",
+      "DOM.Iterable",
+      "ScriptHost"
+    ],
+    "paths": {
+      "@config": [
+        "./package.json"
+      ]
+    },
+    "types": [
+      "webpack-env",
+      "jest"
+    ]
+  },
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}
