@@ -3,9 +3,9 @@
 A modern micro-frontend development tool for Vue.js applications.
 
 [![Website](https://img.shields.io/badge/Website-lidhiumjs.com-blue?style=flat&logo=web)](https://lidhiumjs.com)
-[![npm version](https://img.shields.io/npm/v/lidhium.svg)](https://www.npmjs.com/package/lidhium)
+[![npm version](https://img.shields.io/npm/v/@lidhium/cli.svg)](https://www.npmjs.com/package/@lidhium/cli)
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![Downloads](https://img.shields.io/npm/dm/lidhium.svg)](https://www.npmjs.com/package/lidhium)
+[![Downloads](https://img.shields.io/npm/dm/@lidhium/cli.svg)](https://www.npmjs.com/package/@lidhium/cli)
 [![GitHub issues](https://img.shields.io/github/issues/lidhishc/lidhiumjs)](https://github.com/lidhishc/lidhiumjs/issues)
 [![Discord](https://img.shields.io/badge/Discord-Join%20Chat-7289da?logo=discord&logoColor=white)](https://discord.gg/AUEUdtY2yJ)
 
@@ -106,6 +106,6 @@ This project is licensed under the GPL-3.0 License - see the [LICENSE](LICENSE) 
 
 ## Links
 
-- [NPM Package](https://www.npmjs.com/package/lidhium)
+- [NPM Package](https://www.npmjs.com/package/@lidhium/cli)
 - [GitHub Repository](https://github.com/lidhishc/lidhium)
 - [Issues](https://github.com/lidhishc/lidhium/issues)
