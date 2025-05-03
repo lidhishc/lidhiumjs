@@ -116,6 +116,8 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: "./public/index.html",
       excludeChunks: ["mfeBBB"],
+      title: "Lidhium JS",
+      favicon: "./public/logo.png",
       minify: {
         removeComments: true,
         collapseWhitespace: true,
