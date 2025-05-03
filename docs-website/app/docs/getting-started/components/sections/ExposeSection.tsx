@@ -1,7 +1,6 @@
 "use client";
 
 import CodeBlock from "../CodeBlock";
-import Link from "next/link";
 
 export default function ExposeSection() {
   return (
@@ -93,8 +92,78 @@ export default function ExposeSection() {
             Using Exposed Components
           </h3>
           <p className="mb-4">
-            To use exposed components in other micro-frontends, import them
-            using Vue&apos;s <code>defineAsyncComponent</code>:
+            To use exposed components in other micro-frontends, use the{" "}
+            <code>loadRemoteComponentVue</code> utility from{" "}
+            <code>@lidhium/common</code>:
+          </p>
+          <CodeBlock
+            code={`<script lang="ts">
+import { loadRemoteComponentVue } from '@lidhium/common';
+
+// Load the exposed component
+const component = loadRemoteComponentVue({
+  importFn: () => import('remote-app/Hello'),
+});
+
+export default {
+  components: {
+    LoginComponent: component,
+  },
+};
+</script>
+
+<template>
+  <div>
+    <LoginComponent />
+  </div>
+</template>`}
+          />
+          <div className="mt-4 p-4 bg-green-50 rounded-lg">
+            <h4 className="font-semibold mb-2">Key Points:</h4>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <code className="bg-green-100 px-2 py-1 rounded">
+                  loadRemoteComponentVue
+                </code>
+                : Provides a streamlined way to load remote components with
+                better error handling
+              </li>
+              <li>
+                <code className="bg-green-100 px-2 py-1 rounded">
+                  TypeScript Support
+                </code>
+                : Use <code>lang=&quot;ts&quot;</code> for better type safety
+                and IDE support
+              </li>
+              <li>
+                <code className="bg-green-100 px-2 py-1 rounded">
+                  Component Registration
+                </code>
+                : Register the loaded component in the components object
+              </li>
+              <li>
+                <code className="bg-green-100 px-2 py-1 rounded">
+                  Template Usage
+                </code>
+                : Use the registered component name in your template
+              </li>
+              <li>
+                <code className="bg-green-100 px-2 py-1 rounded">
+                  Binding Required
+                </code>
+                : Make sure the remote app is properly bind to your application.
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="bg-gray-50 p-6 rounded-xl mt-6">
+          <h3 className="text-xl font-semibold mb-4">
+            Alternative: Using defineAsyncComponent
+          </h3>
+          <p className="mb-4">
+            You can also use Vue&apos;s <code>defineAsyncComponent</code> to
+            load exposed components:
           </p>
           <CodeBlock
             code={`import { defineAsyncComponent } from 'vue'
@@ -110,34 +179,21 @@ export default {
   }
 }`}
           />
-          <div className="mt-4 p-4 bg-green-50 rounded-lg">
-            <h4 className="font-semibold mb-2">Key Points:</h4>
+          <div className="mt-4 p-4 bg-blue-50 rounded-lg">
+            <h4 className="font-semibold mb-2">Note:</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <code className="bg-green-100 px-2 py-1 rounded">
+                <code className="bg-blue-100 px-2 py-1 rounded">
                   defineAsyncComponent
                 </code>
-                : Loads the component asynchronously for better performance
+                : Basic Vue utility for async component loading
               </li>
               <li>
-                <code className="bg-green-100 px-2 py-1 rounded">
-                  remote-app/Hello
+                <code className="bg-blue-100 px-2 py-1 rounded">
+                  Limited Features
                 </code>
-                : Uses the remoteComponentValue from the configuration
-              </li>
-
-              <li>
-                <code className="bg-green-100 px-2 py-1 rounded">
-                  Binding Required
-                </code>
-                : Make sure the remote app is properly bind to your application.
-                for more information, refer to the{" "}
-                <Link
-                  href="#bind-the-host-app"
-                  className="text-blue-600 hover:underline"
-                >
-                  Bind Micro-app
-                </Link>
+                : Lacks the enhanced error handling and type safety of
+                loadRemoteComponentVue
               </li>
             </ul>
           </div>
