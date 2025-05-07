@@ -92,7 +92,7 @@ export default () => async (appName: string) => {
         devDependencies: {
           "@babel/core": "^7.26.0",
           "@babel/preset-env": "^7.26.0",
-          "@lidhium/common": "1.0.3",
+          "@lidhium/common": "1.0.6",
           "@types/jest": "^29.5.14",
           "@types/mocha": "^10.0.10",
           "@types/node": "^22.13.8",
