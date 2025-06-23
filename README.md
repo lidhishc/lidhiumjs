@@ -107,5 +107,5 @@ This project is licensed under the GPL-3.0 License - see the [LICENSE](LICENSE) 
 ## Links
 
 - [NPM Package](https://www.npmjs.com/package/@lidhium/cli)
-- [GitHub Repository](https://github.com/lidhishc/lidhium)
-- [Issues](https://github.com/lidhishc/lidhium/issues)
+- [GitHub Repository](https://github.com/lidhishc/lidhiumjs)
+- [Issues](https://github.com/lidhishc/lidhiumjs/issues)
